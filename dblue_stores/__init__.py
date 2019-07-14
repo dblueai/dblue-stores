@@ -1,1 +1,1 @@
-from dblue_stores.stores.manager import StoreManager
+from .stores.manager import StoreManager
