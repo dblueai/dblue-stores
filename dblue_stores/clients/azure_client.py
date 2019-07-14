@@ -5,16 +5,16 @@ from azure.storage.blob import BlockBlobService
 from decouple import config
 
 
-def get_account_name(key=None):
-    return config(key or 'AZURE_ACCOUNT_NAME')
+def get_account_name(key='AZURE_ACCOUNT_NAME'):
+    return config(key, default=None)
 
 
-def get_account_key(key=None):
-    return config(key or 'AZURE_ACCOUNT_KEY')
+def get_account_key(key='AZURE_ACCOUNT_KEY'):
+    return config(key, default=None)
 
 
-def get_connection_string(key=None):
-    return config(key or 'AZURE_CONNECTION_STRING')
+def get_connection_string(key='AZURE_CONNECTION_STRING'):
+    return config(key, default=None)
 
 
 def get_blob_service_connection(account_name=None, account_key=None, connection_string=None):

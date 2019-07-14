@@ -17,20 +17,20 @@ from ..logger import logger
 DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 
-def get_project_id(key=None):
-    return config(key or 'GCP_PROJECT_ID')
+def get_project_id(key='GCP_PROJECT_ID'):
+    return config(key, default=None)
 
 
-def get_key_path(key=None):
-    return config(key or 'GCP_KEY_FILE_PATH')
+def get_key_path(key='GCP_KEY_FILE_PATH'):
+    return config(key, default=None)
 
 
-def get_keyfile_dict(key=None):
-    return config(key or 'GCP_KEY_FILE_DICT')
+def get_keyfile_dict(key='GCP_KEY_FILE_DICT'):
+    return config(key, default=None)
 
 
-def get_scopes(key=None):
-    return config(key or 'GCP_SCOPES')
+def get_scopes(key='GCP_SCOPES'):
+    return config(key, default=None)
 
 
 def get_gc_credentials(key_path=None, keyfile_dict=None, scopes=None):

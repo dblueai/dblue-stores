@@ -14,6 +14,7 @@ class StoreManager(object):
 
     def __init__(self, store=None, path=None, dataset_id=None):
         self._path = path
+        self._dataset_id = dataset_id
         if not store and dataset_id:
             store = BaseStore.get_store_for_dataset_id(dataset_id=dataset_id)
         if not store:
@@ -46,6 +47,10 @@ class StoreManager(object):
     @property
     def path(self):
         return self._path
+
+    @property
+    def dataset_id(self):
+        return self._dataset_id
 
     def ls(self, path, sort=True):
         if self._path:  # We assume rel paths

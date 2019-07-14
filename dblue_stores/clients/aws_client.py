@@ -5,36 +5,36 @@ import boto3
 from decouple import config
 
 
-def get_aws_access_key_id(key=None):
-    return config(key or 'AWS_ACCESS_KEY_ID')
+def get_aws_access_key_id(key='AWS_ACCESS_KEY_ID'):
+    return config(key, default=None)
 
 
 def get_aws_secret_access_key(key=None):
-    return config(key or 'AWS_SECRET_ACCESS_KEY')
+    return config(key, default=None)
 
 
-def get_aws_security_token(key=None):
-    return config(key or 'AWS_SECURITY_TOKEN')
+def get_aws_security_token(key='AWS_SECURITY_TOKEN'):
+    return config(key, default=None)
 
 
-def get_region(key=None):
-    return config(key or 'AWS_REGION')
+def get_region(key='AWS_REGION'):
+    return config(key, default=None)
 
 
-def get_endpoint_url(key=None):
-    return config(key or 'AWS_ENDPOINT_URL')
+def get_endpoint_url(key='AWS_ENDPOINT_URL'):
+    return config(key, default=None)
 
 
-def get_aws_use_ssl(key=None):
-    return config(key or 'AWS_USE_SSL', cast=bool)
+def get_aws_use_ssl(key='AWS_USE_SSL'):
+    return config(key, default=None, cast=bool)
 
 
-def get_aws_verify_ssl(key=None):
-    return config(key or 'AWS_VERIFY_SSL', cast=bool)
+def get_aws_verify_ssl(key='AWS_VERIFY_SSL'):
+    return config(key, default=None, cast=bool)
 
 
-def get_aws_legacy_api(key=None):
-    return config(key or 'AWS_LEGACY_API', cast=bool)
+def get_aws_legacy_api(key='AWS_LEGACY_API'):
+    return config(key, default=None, cast=bool)
 
 
 def get_legacy_api(legacy_api=False):
