@@ -44,9 +44,9 @@ class BaseStore(object):
             'Received an unrecognised store type `{}`.'.format(store_type))
 
     @classmethod
-    def get_store_for_path(cls, path):
+    def get_store_for_dataset_id(cls, dataset_id):
         try:
-            credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, path)
+            credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, dataset_id)
             with open(credential_file_path) as f:
                 credential = json.load(f)
 

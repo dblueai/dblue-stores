@@ -12,10 +12,10 @@ class StoreManager(object):
     A convenient class to map experiment/job outputs/data paths to a given/configured store.
     """
 
-    def __init__(self, store=None, path=None):
+    def __init__(self, store=None, path=None, dataset_id=None):
         self._path = path
-        if not store and path:
-            store = BaseStore.get_store_for_path(path=path)
+        if not store and dataset_id:
+            store = BaseStore.get_store_for_dataset_id(dataset_id=dataset_id)
         if not store:
             store = BaseStore.get_store()
         if isinstance(store, BaseStore):
