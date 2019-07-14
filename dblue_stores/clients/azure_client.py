@@ -2,23 +2,19 @@
 from __future__ import absolute_import, division, print_function
 
 from azure.storage.blob import BlockBlobService
-
-from polystores.utils import get_from_env
-
-
-def get_account_name(keys=None):
-    keys = keys or ['AZURE_ACCOUNT_NAME']
-    return get_from_env(keys)
+from decouple import config
 
 
-def get_account_key(keys=None):
-    keys = keys or ['AZURE_ACCOUNT_KEY']
-    return get_from_env(keys)
+def get_account_name(key=None):
+    return config(key or 'AZURE_ACCOUNT_NAME')
 
 
-def get_connection_string(keys=None):
-    keys = keys or ['AZURE_CONNECTION_STRING']
-    return get_from_env(keys)
+def get_account_key(key=None):
+    return config(key or 'AZURE_ACCOUNT_KEY')
+
+
+def get_connection_string(key=None):
+    return config(key or 'AZURE_CONNECTION_STRING')
 
 
 def get_blob_service_connection(account_name=None, account_key=None, connection_string=None):

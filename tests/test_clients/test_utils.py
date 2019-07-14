@@ -5,7 +5,7 @@ import os
 
 from unittest import TestCase
 
-from polystores.utils import get_from_env
+from dblue_stores.utils import get_from_env
 
 
 class TestConstraintConfigs(TestCase):

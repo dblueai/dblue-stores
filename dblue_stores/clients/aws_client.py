@@ -2,48 +2,39 @@
 from __future__ import absolute_import, division, print_function
 
 import boto3
-
-from polystores.utils import get_from_env
-
-
-def get_aws_access_key_id(keys=None):
-    keys = keys or ['AWS_ACCESS_KEY_ID']
-    return get_from_env(keys)
+from decouple import config
 
 
-def get_aws_secret_access_key(keys=None):
-    keys = keys or ['AWS_SECRET_ACCESS_KEY']
-    return get_from_env(keys)
+def get_aws_access_key_id(key=None):
+    return config(key or 'AWS_ACCESS_KEY_ID')
 
 
-def get_aws_security_token(keys=None):
-    keys = keys or ['AWS_SECURITY_TOKEN']
-    return get_from_env(keys)
+def get_aws_secret_access_key(key=None):
+    return config(key or 'AWS_SECRET_ACCESS_KEY')
 
 
-def get_region(keys=None):
-    keys = keys or ['AWS_REGION']
-    return get_from_env(keys)
+def get_aws_security_token(key=None):
+    return config(key or 'AWS_SECURITY_TOKEN')
 
 
-def get_endpoint_url(keys=None):
-    keys = keys or ['AWS_ENDPOINT_URL']
-    return get_from_env(keys)
+def get_region(key=None):
+    return config(key or 'AWS_REGION')
 
 
-def get_aws_use_ssl(keys=None):
-    keys = keys or ['AWS_USE_SSL']
-    return get_from_env(keys)
+def get_endpoint_url(key=None):
+    return config(key or 'AWS_ENDPOINT_URL')
 
 
-def get_aws_verify_ssl(keys=None):
-    keys = ['AWS_VERIFY_SSL'] if keys is None else keys
-    return get_from_env(keys)
+def get_aws_use_ssl(key=None):
+    return config(key or 'AWS_USE_SSL', cast=bool)
 
 
-def get_aws_legacy_api(keys=None):
-    keys = keys or ['AWS_LEGACY_API']
-    return get_from_env(keys)
+def get_aws_verify_ssl(key=None):
+    return config(key or 'AWS_VERIFY_SSL', cast=bool)
+
+
+def get_aws_legacy_api(key=None):
+    return config(key or 'AWS_LEGACY_API', cast=bool)
 
 
 def get_legacy_api(legacy_api=False):

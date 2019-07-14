@@ -9,11 +9,11 @@ from six import BytesIO
 
 from botocore.exceptions import ClientError
 
-from polystores.clients import aws_client
-from polystores.exceptions import PolyaxonStoresException
-from polystores.logger import logger
-from polystores.stores.base_store import BaseStore
-from polystores.utils import (
+from dblue_stores.clients import aws_client
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.logger import logger
+from dblue_stores.stores.base_store import BaseStore
+from dblue_stores.utils import (
     append_basename,
     check_dirname_exists,
     force_bytes,
@@ -171,7 +171,7 @@ class S3Store(BaseStore):
             spec = rhea_parser.parse_s3_path(s3_url)
             return spec.bucket, spec.key
         except RheaError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     @staticmethod
     def check_prefix_format(prefix, delimiter):
@@ -344,7 +344,7 @@ class S3Store(BaseStore):
             obj.load()
             return obj
         except Exception as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def read_key(self, key, bucket_name=None):
         """
@@ -459,7 +459,7 @@ class S3Store(BaseStore):
             key = append_basename(key, filename)
 
         if not overwrite and self.check_key(key, bucket_name):
-            raise PolyaxonStoresException("The key {} already exists.".format(key))
+            raise DblueStoresException("The key {} already exists.".format(key))
 
         extra_args = {}
         if encrypt:
@@ -492,7 +492,7 @@ class S3Store(BaseStore):
         try:
             self.client.download_file(bucket_name, key, local_path)
         except ClientError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def upload_dir(self,
                    dirname,
@@ -556,7 +556,7 @@ class S3Store(BaseStore):
 
         try:
             check_dirname_exists(local_path, is_dir=True)
-        except PolyaxonStoresException:
+        except DblueStoresException:
             os.makedirs(local_path)
 
         results = self.list(bucket_name=bucket_name, prefix=key, delimiter='/')
@@ -609,4 +609,4 @@ class S3Store(BaseStore):
             obj = self.resource.Object(bucket_name, key)
             obj.delete()
         except ClientError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)

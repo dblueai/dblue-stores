@@ -8,8 +8,8 @@ from unittest import TestCase
 
 import mock
 
-from polystores.exceptions import PolyaxonStoresException
-from polystores.stores.gcs_store import GCSStore
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.stores.gcs_store import GCSStore
 
 GCS_MODULE = 'polystores.clients.gc_client.{}'
 
@@ -23,7 +23,7 @@ class TestGCSStore(TestCase):
 
         # Wrong url
         gcs_url = 'gs:/bucket/path/to/blob'
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             GCSStore.parse_gcs_url(gcs_url)
 
         # Trailing slash

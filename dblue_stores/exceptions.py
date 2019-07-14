@@ -2,5 +2,5 @@
 from __future__ import absolute_import, division, print_function
 
 
-class PolyaxonStoresException(Exception):
+class DblueStoresException(Exception):
     pass

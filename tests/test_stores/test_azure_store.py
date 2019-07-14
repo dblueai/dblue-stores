@@ -9,8 +9,8 @@ import mock
 
 from azure.storage.blob import Blob, BlobPrefix, BlobProperties
 
-from polystores.exceptions import PolyaxonStoresException
-from polystores.stores.azure_store import AzureStore
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.stores.azure_store import AzureStore
 
 AZURE_MODULE = 'polystores.clients.azure_client.{}'
 
@@ -45,15 +45,15 @@ class TestAzureStore(TestCase):
 
         # Wrong url
         wasbs_url = 'wasbs://container@user.foo.bar.windows.net/path/to/file'
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             AzureStore.parse_wasbs_url(wasbs_url)
 
         wasbs_url = 'wasbs://container@user.blob.core.foo.net/path/to/file'
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             AzureStore.parse_wasbs_url(wasbs_url)
 
         wasbs_url = 'wasbs://container@user.blob.windows.net/path/to/file'
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             AzureStore.parse_wasbs_url(wasbs_url)
 
     @mock.patch(AZURE_MODULE.format('BlockBlobService'))

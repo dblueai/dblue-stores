@@ -5,8 +5,8 @@ from unittest import TestCase
 
 import mock
 
-from polystores.clients.gc_client import get_gc_client, get_gc_credentials
-from polystores.exceptions import PolyaxonStoresException
+from dblue_stores.clients.gc_client import get_gc_client, get_gc_credentials
+from dblue_stores.exceptions import DblueStoresException
 
 GCS_MODULE = 'polystores.clients.gc_client.{}'
 
@@ -22,7 +22,7 @@ class TestGCClient(TestCase):
     @mock.patch(GCS_MODULE.format('Credentials.from_service_account_file'))
     def test_get_key_path_gc_credentials(self, service_account):
 
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             get_gc_credentials(key_path='key_path')
 
         service_account.return_value = None
@@ -32,7 +32,7 @@ class TestGCClient(TestCase):
 
     @mock.patch(GCS_MODULE.format('Credentials.from_service_account_info'))
     def test_get_keyfile_dict_gc_credentials(self, service_account):
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             get_gc_credentials(keyfile_dict='keyfile_dict')
 
         service_account.return_value = None

@@ -23,22 +23,22 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 
-setup(name='polystores',
-      version='0.2.3',
-      description='Polystores is an abstraction and a collection of clients '
+setup(name='dblue_stores',
+      version='1.0.0',
+      description='Dblue is an abstraction and a collection of clients '
                   'to interact with cloud storages.',
       long_description=read_readme(),
       long_description_content_type="text/markdown",
-      maintainer='Mourad Mourafiq',
-      maintainer_email='mourad@polyaxon.com',
-      author='Mourad Mourafiq',
-      author_email='mourad@polyaxon.com',
-      url='https://github.com/polyaxon/polystores',
+      maintainer='Rajesh Hegde',
+      maintainer_email='rajesh@dblue.ai',
+      author='Rajesh Hegde',
+      author_email='rajesh@dblue.ai',
+      url='',
       license='MIT',
       platforms='any',
       packages=find_packages(),
       keywords=[
-          'polyaxon',
+          'dblue',
           'aws',
           's3',
           'microsoft',

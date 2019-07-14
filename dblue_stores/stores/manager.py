@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from polystores.exceptions import PolyaxonStoresException
-from polystores.stores.base_store import BaseStore
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.stores.base_store import BaseStore
 
 
 class StoreManager(object):
@@ -21,7 +21,7 @@ class StoreManager(object):
         if isinstance(store, BaseStore):
             self._store = store
         else:
-            raise PolyaxonStoresException('Received an unrecognised store `{}`.'.format(store))
+            raise DblueStoresException('Received an unrecognised store `{}`.'.format(store))
 
     @classmethod
     def get_for_type(cls, store_type, store_access):

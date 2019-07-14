@@ -10,8 +10,8 @@ from boto3.resources.base import ServiceResource
 from botocore.client import BaseClient
 from moto import mock_s3
 
-from polystores.exceptions import PolyaxonStoresException
-from polystores.stores.s3_store import S3Store
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.stores.s3_store import S3Store
 
 
 class TestAwsStore(TestCase):
@@ -183,7 +183,7 @@ class TestAwsStore(TestCase):
         assert store.get_key('s3://bucket/a').key == 'a'
 
         # No bucket
-        with self.assertRaises(PolyaxonStoresException):
+        with self.assertRaises(DblueStoresException):
             store.get_key('a', 'nobucket')
 
     @mock_s3

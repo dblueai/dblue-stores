@@ -9,12 +9,12 @@ from rhea import parser as rhea_parser
 
 from google.api_core.exceptions import GoogleAPIError, NotFound
 
-from polystores import settings
-from polystores.clients import gc_client
-from polystores.exceptions import PolyaxonStoresException
-from polystores.logger import logger
-from polystores.stores.base_store import BaseStore
-from polystores.utils import (
+from dblue_stores import settings
+from dblue_stores.clients import gc_client
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.logger import logger
+from dblue_stores.stores.base_store import BaseStore
+from dblue_stores.utils import (
     append_basename,
     check_dirname_exists,
     create_polyaxon_tmp,
@@ -97,7 +97,7 @@ class GCSStore(BaseStore):
             spec = rhea_parser.parse_gcs_path(gcs_url)
             return spec.bucket, spec.blob
         except RheaError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def get_bucket(self, bucket_name):
         """
@@ -138,7 +138,7 @@ class GCSStore(BaseStore):
         obj = bucket.get_blob(blob)
 
         if obj is None:
-            raise PolyaxonStoresException('File does not exist: {}'.format(blob))
+            raise DblueStoresException('File does not exist: {}'.format(blob))
 
         return obj
 
@@ -254,7 +254,7 @@ class GCSStore(BaseStore):
             blob = self.get_blob(blob=blob, bucket_name=bucket_name)
             blob.download_to_filename(local_path)
         except (NotFound, GoogleAPIError) as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def upload_dir(self, dirname, blob, bucket_name=None, use_basename=True):
         """
@@ -302,7 +302,7 @@ class GCSStore(BaseStore):
 
         try:
             check_dirname_exists(local_path, is_dir=True)
-        except PolyaxonStoresException:
+        except DblueStoresException:
             os.makedirs(local_path)
 
         results = self.list(bucket_name=bucket_name, key=blob, delimiter='/')
@@ -354,4 +354,4 @@ class GCSStore(BaseStore):
         try:
             return bucket.delete_blob(key)
         except (NotFound, GoogleAPIError) as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)

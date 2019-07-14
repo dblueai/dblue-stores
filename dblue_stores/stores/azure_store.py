@@ -3,16 +3,16 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
+from azure.common import AzureHttpError
+from azure.storage.blob.models import BlobPrefix
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from azure.common import AzureHttpError
-from azure.storage.blob.models import BlobPrefix
+from dblue_stores.clients.azure_client import get_blob_service_connection
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.stores.base_store import BaseStore
+from dblue_stores.utils import append_basename, check_dirname_exists, get_files_in_current_directory
 
-from polystores.clients.azure_client import get_blob_service_connection
-from polystores.exceptions import PolyaxonStoresException
-from polystores.stores.base_store import BaseStore
-from polystores.utils import append_basename, check_dirname_exists, get_files_in_current_directory
 
 # pylint:disable=arguments-differ
 
@@ -28,7 +28,7 @@ class AzureStore(BaseStore):
         self._account_name = kwargs.get('account_name') or kwargs.get('AZURE_ACCOUNT_NAME')
         self._account_key = kwargs.get('account_key') or kwargs.get('AZURE_ACCOUNT_KEY')
         self._connection_string = (
-            kwargs.get('connection_string') or kwargs.get('AZURE_CONNECTION_STRING'))
+                kwargs.get('connection_string') or kwargs.get('AZURE_CONNECTION_STRING'))
 
     @property
     def connection(self):
@@ -75,7 +75,7 @@ class AzureStore(BaseStore):
             spec = rhea_parser.parse_wasbs_path(wasbs_url)
             return spec.container, spec.storage_account, spec.path
         except RheaError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def check_blob(self, blob, container_name=None):
         """
@@ -216,7 +216,7 @@ class AzureStore(BaseStore):
         try:
             self.connection.get_blob_to_path(container_name, blob, local_path)
         except AzureHttpError as e:
-            raise PolyaxonStoresException(e)
+            raise DblueStoresException(e)
 
     def download_dir(self, blob, local_path, container_name=None, use_basename=True):
         """
@@ -238,7 +238,7 @@ class AzureStore(BaseStore):
 
         try:
             check_dirname_exists(local_path, is_dir=True)
-        except PolyaxonStoresException:
+        except DblueStoresException:
             os.makedirs(local_path)
 
         results = self.list(container_name=container_name, key=blob, delimiter='/')

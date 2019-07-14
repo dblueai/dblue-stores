@@ -12,31 +12,28 @@ import google.oauth2.service_account
 from google.cloud.storage.client import Client
 from google.oauth2.service_account import Credentials
 
-from polystores.exceptions import PolyaxonStoresException
-from polystores.logger import logger
-from polystores.utils import get_from_env
+from dblue_stores.exceptions import DblueStoresException
+from dblue_stores.logger import logger
+
+from decouple import config
 
 DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 
-def get_project_id(keys=None):
-    keys = keys or ['GC_PROJECT', 'GOOGLE_PROJECT', 'GC_PROJECT_ID', 'GOOGLE_PROJECT_ID']
-    return get_from_env(keys)
+def get_project_id(key=None):
+    return config(key or 'GCP_PROJECT_ID')
 
 
-def get_key_path(keys=None):
-    keys = keys or ['GC_KEY_PATH', 'GOOGLE_KEY_PATH']
-    return get_from_env(keys)
+def get_key_path(key=None):
+    return config(key or 'GCP_KEY_FILE_PATH')
 
 
-def get_keyfile_dict(keys=None):
-    keys = keys or ['GC_KEYFILE_DICT', 'GOOGLE_KEYFILE_DICT']
-    return get_from_env(keys)
+def get_keyfile_dict(key=None):
+    return config(key or 'GCP_KEY_FILE_DICT')
 
 
-def get_scopes(keys=None):
-    keys = keys or ['GC_SCOPES', 'GOOGLE_SCOPES']
-    return get_from_env(keys)
+def get_scopes(key=None):
+    return config(key or 'GCP_SCOPES')
 
 
 def get_gc_credentials(key_path=None, keyfile_dict=None, scopes=None):
@@ -63,7 +60,7 @@ def get_gc_credentials(key_path=None, keyfile_dict=None, scopes=None):
             credentials = Credentials.from_service_account_file(
                 os.path.abspath(key_path), scopes=scopes)
         else:
-            raise PolyaxonStoresException('Unrecognised extension for key file.')
+            raise DblueStoresException('Unrecognised extension for key file.')
     else:
         # Get credentials from JSON data.
         try:
@@ -75,7 +72,7 @@ def get_gc_credentials(key_path=None, keyfile_dict=None, scopes=None):
 
             credentials = Credentials.from_service_account_info(keyfile_dict, scopes=scopes)
         except ValueError:  # json.decoder.JSONDecodeError does not exist on py2
-            raise PolyaxonStoresException('Invalid key JSON.')
+            raise DblueStoresException('Invalid key JSON.')
 
     return credentials
 

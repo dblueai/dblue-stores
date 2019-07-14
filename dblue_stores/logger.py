@@ -2,9 +2,10 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+
 import sys
 
-logger = logging.getLogger('polystores')
+logger = logging.getLogger('dblue:store')
 
 
 def configure_logger(verbose):
