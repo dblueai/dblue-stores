@@ -3,19 +3,16 @@ from __future__ import absolute_import, division, print_function
 
 import json
 import os
-
 from collections import Mapping
 
 import google.auth
 import google.oauth2.service_account
-
+from decouple import config
 from google.cloud.storage.client import Client
 from google.oauth2.service_account import Credentials
 
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.logger import logger
-
-from decouple import config
+from ..exceptions import DblueStoresException
+from ..logger import logger
 
 DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 

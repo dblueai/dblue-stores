@@ -7,11 +7,11 @@ from google.api_core.exceptions import GoogleAPIError, NotFound
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from dblue_stores.clients import gc_client
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.logger import logger
-from dblue_stores.stores.base_store import BaseStore
-from dblue_stores.utils import (
+from .base_store import BaseStore
+from ..clients import gc_client
+from ..exceptions import DblueStoresException
+from ..logger import logger
+from ..utils import (
     append_basename,
     check_dirname_exists,
     get_files_in_current_directory

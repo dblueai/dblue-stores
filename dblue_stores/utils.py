@@ -6,8 +6,8 @@ import os
 from contextlib import contextmanager
 from decimal import Decimal
 
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.logger import logger
+from .exceptions import DblueStoresException
+from .logger import logger
 
 
 def is_protected_type(obj):

@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.base_store import BaseStore
+from .base_store import BaseStore
+from ..exceptions import DblueStoresException
 
 
 class StoreManager(object):

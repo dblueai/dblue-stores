@@ -4,8 +4,8 @@ from __future__ import absolute_import, division, print_function
 import os
 import shutil
 
-from dblue_stores.logger import logger
-from dblue_stores.stores.base_store import BaseStore
+from .base_store import BaseStore
+from ..logger import logger
 
 
 class LocalStore(BaseStore):

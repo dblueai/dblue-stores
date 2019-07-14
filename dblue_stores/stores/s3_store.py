@@ -3,22 +3,22 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
+from botocore.exceptions import ClientError
 from rhea import RheaError
 from rhea import parser as rhea_parser
 from six import BytesIO
 
-from botocore.exceptions import ClientError
-
-from dblue_stores.clients import aws_client
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.logger import logger
-from dblue_stores.stores.base_store import BaseStore
-from dblue_stores.utils import (
+from .base_store import BaseStore
+from ..clients import aws_client
+from ..exceptions import DblueStoresException
+from ..logger import logger
+from ..utils import (
     append_basename,
     check_dirname_exists,
     force_bytes,
     get_files_in_current_directory
 )
+
 
 # pylint:disable=arguments-differ
 

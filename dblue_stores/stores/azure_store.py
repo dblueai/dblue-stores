@@ -8,10 +8,10 @@ from azure.storage.blob.models import BlobPrefix
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from dblue_stores.clients.azure_client import get_blob_service_connection
-from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.base_store import BaseStore
-from dblue_stores.utils import append_basename, check_dirname_exists, get_files_in_current_directory
+from .base_store import BaseStore
+from ..clients.azure_client import get_blob_service_connection
+from ..exceptions import DblueStoresException
+from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
 
 
 # pylint:disable=arguments-differ
