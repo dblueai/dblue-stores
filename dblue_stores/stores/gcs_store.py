@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import json
 import os
 
+from google.api_core.exceptions import GoogleAPIError, NotFound
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from google.api_core.exceptions import GoogleAPIError, NotFound
-
-from dblue_stores import settings
 from dblue_stores.clients import gc_client
 from dblue_stores.exceptions import DblueStoresException
 from dblue_stores.logger import logger
@@ -17,9 +14,9 @@ from dblue_stores.stores.base_store import BaseStore
 from dblue_stores.utils import (
     append_basename,
     check_dirname_exists,
-    create_polyaxon_tmp,
     get_files_in_current_directory
 )
+
 
 # pylint:disable=arguments-differ
 
@@ -75,15 +72,6 @@ class GCSStore(BaseStore):
             credentials=credentials,
             scopes=scopes,
         )
-
-    def set_env_vars(self):
-        if self._key_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = self._key_path
-        elif self._keyfile_dict:
-            create_polyaxon_tmp()
-            with open(settings.TMP_AUTH_GCS_ACCESS_PATH, 'w') as outfile:
-                json.dump(self._keyfile_dict, outfile)
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.TMP_AUTH_GCS_ACCESS_PATH
 
     @staticmethod
     def parse_gcs_url(gcs_url):

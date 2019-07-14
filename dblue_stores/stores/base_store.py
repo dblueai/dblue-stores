@@ -12,7 +12,7 @@ class BaseStore(object):
     A base store interface.
     """
     _LOCAL_STORE = 'local'
-    _AZURE_STORE = 'azure'
+    _AZURE_STORE = 'azure-storage'
     _S3_STORE = 's3'
     _GCS_STORE = 'gcs'
     _STORE_TYPES = {_LOCAL_STORE, _AZURE_STORE, _S3_STORE, _GCS_STORE}

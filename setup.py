@@ -54,6 +54,7 @@ setup(name='dblue_stores',
           'docker'
       ],
       install_requires=[
+          "python-decouple==3.1",
           "rhea>=0.5.4",
       ],
       extras_require={
