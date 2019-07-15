@@ -16,7 +16,9 @@ class StoreManager(object):
         self._path = path
         self._dataset_id = dataset_id
         if not store and dataset_id:
-            store = BaseStore.get_store_for_dataset_id(dataset_id=dataset_id)
+            store, _path = BaseStore.get_store_for_dataset_id(dataset_id=dataset_id)
+            if not path:
+                self._path = _path
         if not store:
             store = BaseStore.get_store()
         if isinstance(store, BaseStore):

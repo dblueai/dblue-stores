@@ -44,15 +44,27 @@ class BaseStore(object):
             'Received an unrecognised store type `{}`.'.format(store_type))
 
     @classmethod
-    def get_store_for_dataset_id(cls, dataset_id):
+    def get_credential_from_file(cls, dataset_id):
         try:
             credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, dataset_id)
             with open(credential_file_path) as f:
                 credential = json.load(f)
+                return credential
+
+        except IOError as e:
+            raise DblueStoresException("Unable to get credential: %s", e)
+
+    @classmethod
+    def get_store_for_dataset_id(cls, dataset_id):
+        try:
+            credential = cls.get_credential_from_file(dataset_id)
 
             store_type = credential.get("store")
             store_access = credential.get("secret")
-            return cls.get_store_for_type(store_type=store_type, store_access=store_access)
+            bucket = credential.get("bucket")
+
+            store = cls.get_store_for_type(store_type=store_type, store_access=store_access)
+            return store, bucket
         except IOError as e:
             raise DblueStoresException("Unable to get credential: %s", e)
         except Exception as e:  # handle other exceptions such as attribute errors
