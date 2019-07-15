@@ -24,7 +24,7 @@ class PyTest(TestCommand):
 
 
 setup(name='dblue_stores',
-      version='1.0.0',
+      version='1.0.1',
       description='Dblue is an abstraction and a collection of clients '
                   'to interact with cloud storages.',
       long_description=read_readme(),
