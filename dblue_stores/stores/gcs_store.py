@@ -168,11 +168,9 @@ class GCSStore(BaseStore):
             return bucket.list_blobs(prefix=prefix, delimiter=delimiter)
 
         def get_blobs(_blobs):
-            logger.info("get_blobs")
             list_blobs = []
             for blob in _blobs:
                 name = blob.name[len(key):]
-                logger.info("name: %s size: %s", name, blob.size)
                 if name:
                     list_blobs.append((name, blob.size))
             return list_blobs
