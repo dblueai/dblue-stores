@@ -171,8 +171,7 @@ class GCSStore(BaseStore):
             list_blobs = []
             for blob in _blobs:
                 name = blob.name[len(key):]
-                size = blob.size
-                if any([name, size]):
+                if name:
                     list_blobs.append((name, blob.size))
             return list_blobs
 
