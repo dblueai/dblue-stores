@@ -21,7 +21,7 @@ class AzureStore(BaseStore):
     """
     Azure store Service.
     """
-    STORE_TYPE = BaseStore._AZURE_STORE  # pylint:disable=protected-access
+    STORE_TYPE = BaseStore.AZURE_STORE
 
     def __init__(self, connection=None, **kwargs):
         self._connection = connection

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
+import json
 import os
 
 from .base_store import BaseStore
+from .. import settings
 from ..exceptions import DblueStoresException
 
 
@@ -12,13 +14,8 @@ class StoreManager(object):
     A convenient class to map experiment/job outputs/data paths to a given/configured store.
     """
 
-    def __init__(self, store=None, path=None, dataset_id=None):
+    def __init__(self, store=None, path=None):
         self._path = path
-        self._dataset_id = dataset_id
-        if not store and dataset_id:
-            store, _path = BaseStore.get_store_for_dataset_id(dataset_id=dataset_id)
-            if not path:
-                self._path = _path
         if not store:
             store = BaseStore.get_store()
         if isinstance(store, BaseStore):
@@ -30,6 +27,35 @@ class StoreManager(object):
     def get_for_type(cls, store_type, store_access):
         store = BaseStore.get_store_for_type(store_type=store_type, store_access=store_access)
         return cls(store=store)
+
+    @classmethod
+    def get_credential_for_dataset(cls, dataset_id):
+        credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, dataset_id)
+        with open(credential_file_path) as f:
+            credential = json.load(f)
+            return credential
+
+    @classmethod
+    def get_store_for_dataset(cls, dataset_id):
+        try:
+            credential = cls.get_credential_for_dataset(dataset_id)
+
+            store_type = credential.get("store") or BaseStore.get_store_type_from_path(credential.get("bucket"))
+            store_access = credential.get("secret")
+            bucket = credential.get("bucket")
+
+            store = BaseStore.get_store_for_type(store_type=store_type, store_access=store_access)
+            return cls(store=store, path=bucket)
+        except IOError:
+            raise DblueStoresException("Unable to get credential for %s", dataset_id)
+        except Exception as e:  # handle other exceptions such as attribute errors
+            raise DblueStoresException("Unable to create store: %s", e)
+
+    @classmethod
+    def get_store_for_path(cls, path, store_access):
+        store_type = BaseStore.get_store_type_from_path(path)
+        store = BaseStore.get_store_for_type(store_type=store_type, store_access=store_access)
+        return cls(store=store, path=path)
 
     def set_store(self, store):
         self._store = store
@@ -49,10 +75,6 @@ class StoreManager(object):
     @property
     def path(self):
         return self._path
-
-    @property
-    def dataset_id(self):
-        return self._dataset_id
 
     def ls(self, path, sort=True):
         if self._path:  # We assume rel paths

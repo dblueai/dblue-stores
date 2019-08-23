@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import json
-
-from .. import settings
 from ..exceptions import DblueStoresException
 
 
@@ -11,32 +8,32 @@ class BaseStore(object):
     """
     A base store interface.
     """
-    _LOCAL_STORE = 'local'
-    _AZURE_STORE = 'azure-storage'
-    _S3_STORE = 's3'
-    _GCS_STORE = 'gcs'
-    _STORE_TYPES = {_LOCAL_STORE, _AZURE_STORE, _S3_STORE, _GCS_STORE}
+    LOCAL_STORE = 'local'
+    AZURE_STORE = 'azure-storage'
+    S3_STORE = 's3'
+    GCS_STORE = 'gcs'
+    STORE_TYPES = {LOCAL_STORE, AZURE_STORE, S3_STORE, GCS_STORE}
 
     STORE_TYPE = None
 
     @classmethod
     def get_store(cls, store_type=None, **kwargs):
         # We assume that `None` refers to local store as well
-        store_type = cls._LOCAL_STORE if store_type is None else store_type
-        if store_type not in cls._STORE_TYPES:
+        store_type = cls.LOCAL_STORE if store_type is None else store_type
+        if store_type not in cls.STORE_TYPES:
             raise DblueStoresException(
                 'Received an unrecognised store type `{}`.'.format(store_type))
 
-        if store_type == cls._LOCAL_STORE:
+        if store_type == cls.LOCAL_STORE:
             from .local_store import LocalStore
             return LocalStore()
-        if store_type == cls._AZURE_STORE:
+        if store_type == cls.AZURE_STORE:
             from .azure_store import AzureStore
             return AzureStore(**kwargs)
-        if store_type == cls._S3_STORE:
+        if store_type == cls.S3_STORE:
             from .s3_store import S3Store
             return S3Store(**kwargs)
-        if store_type == cls._GCS_STORE:
+        if store_type == cls.GCS_STORE:
             from .gcs_store import GCSStore
             return GCSStore(**kwargs)
 
@@ -44,35 +41,21 @@ class BaseStore(object):
             'Received an unrecognised store type `{}`.'.format(store_type))
 
     @classmethod
-    def get_credential_from_file(cls, dataset_id):
-        try:
-            credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, dataset_id)
-            with open(credential_file_path) as f:
-                credential = json.load(f)
-                return credential
+    def get_store_type_from_path(cls, path):
+        store_type = BaseStore.LOCAL_STORE
 
-        except IOError as e:
-            raise DblueStoresException("Unable to get credential: %s", e)
+        if path.startswith("gs://"):
+            store_type = BaseStore.GCS_STORE
+        elif path.startswith("s3://"):
+            store_type = BaseStore.S3_STORE
+        elif path.startswith("wasbs://"):
+            store_type = BaseStore.AZURE_STORE
 
-    @classmethod
-    def get_store_for_dataset_id(cls, dataset_id):
-        try:
-            credential = cls.get_credential_from_file(dataset_id)
-
-            store_type = credential.get("store")
-            store_access = credential.get("secret")
-            bucket = credential.get("bucket")
-
-            store = cls.get_store_for_type(store_type=store_type, store_access=store_access)
-            return store, bucket
-        except IOError as e:
-            raise DblueStoresException("Unable to get credential: %s", e)
-        except Exception as e:  # handle other exceptions such as attribute errors
-            raise DblueStoresException("Unable to create store: %s", e)
+        return store_type
 
     @classmethod
     def get_store_for_type(cls, store_type, store_access):
-        if store_type == cls._GCS_STORE:
+        if store_type == cls.GCS_STORE:
             return cls.get_store(store_type=store_type, keyfile_dict=store_access)
         return cls.get_store(store_type=store_type, **store_access)
 
@@ -82,19 +65,19 @@ class BaseStore(object):
 
     @property
     def is_local_store(self):
-        return self.STORE_TYPE == self._LOCAL_STORE
+        return self.STORE_TYPE == self.LOCAL_STORE
 
     @property
     def is_s3_store(self):
-        return self.STORE_TYPE == self._S3_STORE
+        return self.STORE_TYPE == self.S3_STORE
 
     @property
     def is_azure_store(self):
-        return self.STORE_TYPE == self._AZURE_STORE
+        return self.STORE_TYPE == self.AZURE_STORE
 
     @property
     def is_gcs_store(self):
-        return self.STORE_TYPE == self._GCS_STORE
+        return self.STORE_TYPE == self.GCS_STORE
 
     def ls(self, path):
         raise NotImplementedError

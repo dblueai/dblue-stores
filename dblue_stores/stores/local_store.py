@@ -16,7 +16,7 @@ class LocalStore(BaseStore):
     """
     # pylint:disable=arguments-differ
 
-    STORE_TYPE = BaseStore._LOCAL_STORE  # pylint:disable=protected-access
+    STORE_TYPE = BaseStore.LOCAL_STORE
 
     @staticmethod
     def _list(path, check, abs_path=False):

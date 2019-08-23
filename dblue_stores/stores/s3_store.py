@@ -27,7 +27,7 @@ class S3Store(BaseStore):
     """
     S3 store Service using Boto3.
     """
-    STORE_TYPE = BaseStore._S3_STORE  # pylint:disable=protected-access
+    STORE_TYPE = BaseStore.S3_STORE
     ENCRYPTION = "AES256"
 
     def __init__(self, client=None, resource=None, **kwargs):

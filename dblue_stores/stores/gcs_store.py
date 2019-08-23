@@ -25,7 +25,7 @@ class GCSStore(BaseStore):
     """
     Google cloud store Service.
     """
-    STORE_TYPE = BaseStore._GCS_STORE  # pylint:disable=protected-access
+    STORE_TYPE = BaseStore.GCS_STORE
 
     def __init__(self, client=None, **kwargs):
         self._client = client
