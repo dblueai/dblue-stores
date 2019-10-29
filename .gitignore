@@ -110,8 +110,6 @@ logs/
 media/
 data/
 
-# environment vars
-polyaxon/polyaxon/env_vars/local.json
 
 # project
 logs/*
@@ -122,9 +120,6 @@ static/rest_framework
 client/dist/
 client/node_modules/
 client/css/
-client/polyaxon/**/*.js
-client/polyaxon/**/*.js.map
-/examples/polyaxon-logs/
 client/npm-debug.log
 # don't ignore static dist
 !/static/dist

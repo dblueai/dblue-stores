@@ -1,19 +1,12 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Build Status](https://travis-ci.com/polyaxon/polystores.svg?branch=master)](https://travis-ci.com/polyaxon/polystores)
-[![PyPI version](https://badge.fury.io/py/polystores.svg)](https://badge.fury.io/py/polystores)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a33947d729f94f5da7f7390dfeef7f94)](https://www.codacy.com/app/polyaxon/polystores?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=polyaxon/polystores&amp;utm_campaign=Badge_Grade)
-[![Slack](https://img.shields.io/badge/chat-on%20slack-aadada.svg?logo=slack&longCache=true)](https://join.slack.com/t/polyaxon/shared_invite/enQtMzQ0ODc2MDg1ODc0LWY2ZTdkMTNmZjBlZmRmNjQxYmYwMTBiMDZiMWJhODI2ZTk0MDU4Mjg5YzA5M2NhYzc5ZjhiMjczMDllYmQ2MDg)
+# Dblue Stores
 
-
-# polystores
-
-Polystores is an abstraction and a collection of clients to interact with cloud storages.
+Dblue Store is an abstraction and a collection of clients to interact with cloud storages.
 
 
 ## Install
 
 ```bash
-$ pip install -U polystores
+$ pip install -U dblue-stores
 ```
 
 N.B. this module does not include by default the cloud storage's client requirements 
@@ -22,21 +15,28 @@ to keep the library lightweight, the user needs to install the appropriate modul
 ### Install S3
 
 ```bash
-pip install -U polystores[s3]
+pip install -U dblue-stores[s3]
 ```
 
 ### Install GCS
 
 
 ```bash
-pip install -U polystores[gcs]
+pip install -U dblue-stores[gcs]
 ```
 
 ### Install Azure Storage
 
 
 ```bash
-pip install -U polystores[azure]
+pip install -U dblue-stores[azure]
+```
+
+### Install SFTP
+
+
+```bash
+pip install -U dblue-stores[sftp]
 ```
 
 ## Stores
@@ -49,13 +49,15 @@ This module includes clients and stores abstraction that can be used to interact
 ### Normal instantiation
 
 ```python
-from polystores.stores.s3_store import S3Store
+from dblue_stores.stores.s3 import S3Store
 
-s3_store = S3Store(endpoint_url=..., 
-                   access_key_id=...,
-                   secret_access_key=...,
-                   session_token=...,
-                   region=...)
+s3_store = S3Store(
+    endpoint_url=..., 
+    access_key_id=...,
+    secret_access_key=...,
+    session_token=...,
+    region=...
+)
 ```
 
 
@@ -71,7 +73,7 @@ exprot AWS_REGION=...
 
 And then you can instantiate the store
 ```python
-from polystores.stores.s3_store import S3Store
+from dblue_stores.stores.s3 import S3Store
 
 s3_store = S3Store()
 ```
@@ -79,7 +81,7 @@ s3_store = S3Store()
 ### Using a client
 
 ```python
-from polystores.stores.s3_store import S3Store
+from dblue_stores.stores.s3 import S3Store
 
 s3_store = S3Store(client=client)
 ```
@@ -107,19 +109,21 @@ s3_store.download_dir(key, local_path, bucket_name=None, use_basename=True)
 ### Normal instantiation
 
 ```python
-from polystores.stores.gcs_store import GCSStore
+from dblue_stores.stores.gcs import GCSStore
 
-gcs_store = GCSStore(project_id=..., 
-                     credentials=...,
-                     key_path=...,
-                     key_path=...,
-                     scopes=...)
+gcs_store = GCSStore(
+    project_id=..., 
+    credentials=...,
+    key_path=...,
+    key_path=...,
+    scopes=...
+)
 ```
 
 ### Using a client
 
 ```python
-from polystores.stores.gcs_store import GCSStore
+from dblue_stores.stores.gcs import GCSStore
 
 gcs_store = GCSStore(client=client)
 ```
@@ -139,11 +143,14 @@ gcs_store.download_dir(blob, local_path, bucket_name=None, use_basename=True)
 ### Normal instantiation
 
 ```python
-from polystores.stores.azure_store import AzureStore
+from dblue_stores.stores.azure import AzureStore
 
-az_store = AzureStore(account_name=..., 
-                      account_key=...,
-                      connection_string=...)
+az_store = AzureStore(
+    account_name=..., 
+    account_key=...,
+    connection_string=...
+)
+                      
 ```
 
 ### Using env vars
@@ -156,7 +163,7 @@ export AZURE_CONNECTION_STRING=...
 
 And then you can instantiate the store
 ```python
-from polystores.stores.azure_store import AzureStore
+from dblue_stores.stores.azure import AzureStore
 
 az_store = AzureStore()
 ```
@@ -164,7 +171,7 @@ az_store = AzureStore()
 ### Using a client
 
 ```python
-from polystores.stores.azure_store import AzureStore
+from dblue_stores.stores.azure import AzureStore
 
 az_store = AzureStore(client=client)
 ```
@@ -185,7 +192,5 @@ az_store.download_dir(blob, local_path, container_name=None, use_basename=True)
 pytest
 ```
 
-
-## License
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpolyaxon%2Fpolystores.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpolyaxon%2Fpolystores?ref=badge_large)
+## Credits
+Most of the codes are borrowed from https://github.com/polyaxon/polystores
