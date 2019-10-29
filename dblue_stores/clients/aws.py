@@ -11,7 +11,7 @@ class AwsClient(BaseClient):
 
     @staticmethod
     def get_legacy_api(legacy_api=False):
-        legacy_api = legacy_api or config("AWS_LEGACY_API", default=None, cast=bool)
+        legacy_api = legacy_api or config("AWS_LEGACY_API", default=False, cast=bool)
         return legacy_api
 
     @staticmethod
@@ -49,10 +49,10 @@ class AwsClient(BaseClient):
                                   region_name=region_name)
 
         endpoint_url = endpoint_url or config("AWS_ENDPOINT_URL", default=None)
-        aws_use_ssl = aws_use_ssl or config("AWS_USE_SSL", default=None, cast=bool)
+        aws_use_ssl = aws_use_ssl or config("AWS_USE_SSL", default=True, cast=bool)
 
         if aws_verify_ssl is None:
-            aws_verify_ssl = config("AWS_VERIFY_SSL", default=None, cast=bool)
+            aws_verify_ssl = config("AWS_VERIFY_SSL", default=True, cast=bool)
         else:
             aws_verify_ssl = aws_verify_ssl
 
@@ -78,10 +78,10 @@ class AwsClient(BaseClient):
                                   region_name=region_name)
 
         endpoint_url = endpoint_url or config("AWS_ENDPOINT_URL", default=None)
-        aws_use_ssl = aws_use_ssl or config("AWS_USE_SSL", default=None, cast=bool)
+        aws_use_ssl = aws_use_ssl or config("AWS_USE_SSL", default=True, cast=bool)
 
         if aws_verify_ssl is None:
-            aws_verify_ssl = config("AWS_VERIFY_SSL", default=None, cast=bool)
+            aws_verify_ssl = config("AWS_VERIFY_SSL", default=True, cast=bool)
         else:
             aws_verify_ssl = aws_verify_ssl
 

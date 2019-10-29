@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from unittest import TestCase
 
 import tempfile
-
-from unittest import TestCase
 
 from dblue_stores.utils import append_basename, get_files_in_current_directory, is_protected_type
 
