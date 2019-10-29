@@ -69,7 +69,7 @@ setup(name='dblue_stores',
               "azure-storage==0.36.0",
           ],
           "sftp": [
-              "paramiko"
+              "paramiko==2.6.0"
           ],
       },
       classifiers=[

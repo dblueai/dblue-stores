@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from google.api_core.exceptions import GoogleAPIError, NotFound
 
-from ..clients.gcp import GcpClient
+from ..clients.gcp import GCPClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
 from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
@@ -57,7 +57,7 @@ class GCSStore(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = GcpClient.get_client(
+        self._client = GCPClient.get_client(
             project_id=project_id,
             key_path=key_path,
             keyfile_dict=keyfile_dict,

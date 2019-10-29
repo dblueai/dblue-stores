@@ -1,10 +1,11 @@
 import boto3
+
 from decouple import config
 
 from .base import BaseClient
 
 
-class AwsClient(BaseClient):
+class AWSClient(BaseClient):
     @classmethod
     def get_client(cls, *args, **kwargs):
         return cls._get_client(*args, **kwargs)

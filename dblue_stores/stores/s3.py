@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 from botocore.exceptions import ClientError
 
-from ..clients.aws import AwsClient
+from ..clients.aws import AWSClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
 from ..utils import (
@@ -102,7 +102,7 @@ class S3Store(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = AwsClient.get_client(
+        self._client = AWSClient.get_client(
             's3',
             endpoint_url=endpoint_url,
             aws_access_key_id=aws_access_key_id,
@@ -133,7 +133,7 @@ class S3Store(BaseStore):
         Returns:
              Service resource instance
         """
-        self._resource = AwsClient.get_resource(
+        self._resource = AWSClient.get_resource(
             's3',
             endpoint_url=endpoint_url,
             aws_access_key_id=aws_access_key_id,
@@ -216,7 +216,7 @@ class S3Store(BaseStore):
             'MaxItems': max_items,
         }
 
-        legacy_api = AwsClient.get_legacy_api(legacy_api=self._aws_legacy_api)
+        legacy_api = AWSClient.get_legacy_api(legacy_api=self._aws_legacy_api)
 
         if legacy_api:
             paginator = self.client.get_paginator('list_objects')

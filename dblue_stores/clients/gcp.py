@@ -1,20 +1,22 @@
-import google.auth
-import google.oauth2.service_account
 import json
 import os
-from collections import Mapping
-from decouple import config
-from google.cloud.storage.client import Client
-from google.oauth2.service_account import Credentials
 
-from .base import BaseClient
+from collections import Mapping
+
+import google.auth
+
+from decouple import config
+from google.cloud.storage.client import Client  # pylint: disable=ungrouped-imports
+from google.oauth2.service_account import Credentials  # pylint: disable=ungrouped-imports
+
 from ..exceptions import DblueStoresException
 from ..logger import logger
+from .base import BaseClient
 
 DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 
-class GcpClient(BaseClient):
+class GCPClient(BaseClient):
 
     @classmethod
     def get_client(cls, *args, **kwargs):
