@@ -1,18 +1,14 @@
 import os
-from google.api_core.exceptions import GoogleAPIError, NotFound
-from rhea import RheaError
-from rhea import parser as rhea_parser
 
-from .base import BaseStore
+from urllib.parse import urlparse
+
+from google.api_core.exceptions import GoogleAPIError, NotFound
+
 from ..clients.gcp import GcpClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import (
-    append_basename,
-    check_dirname_exists,
-    get_files_in_current_directory
-)
-
+from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -77,11 +73,14 @@ class GCSStore(BaseStore):
         Returns:
             tuple(bucket_name, blob).
         """
-        try:
-            spec = rhea_parser.parse_gcs_path(gcs_url)
-            return spec.bucket, spec.blob
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(gcs_url)
+        if not parsed_url.netloc:
+            raise DblueStoresException('Received an invalid GCS url `{}`'.format(gcs_url))
+        if parsed_url.scheme != 'gs':
+            raise DblueStoresException('Received an invalid url GCS `{}`'.format(gcs_url))
+        blob = parsed_url.path.lstrip('/')
+
+        return parsed_url.netloc, blob
 
     def get_bucket(self, bucket_name):
         """

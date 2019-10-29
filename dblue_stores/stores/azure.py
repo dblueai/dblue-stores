@@ -1,14 +1,15 @@
 import os
-from azure.common import AzureHttpError
-from azure.storage.blob.models import BlobPrefix
-from rhea import RheaError
-from rhea import parser as rhea_parser
+import re
 
-from .base import BaseStore
+from urllib.parse import urlparse
+
+from azure.common import AzureHttpError  # pylint: disable=import-error
+from azure.storage.blob.models import BlobPrefix  # pylint: disable=import-error
+
 from ..clients.azure import AzureClient
 from ..exceptions import DblueStoresException
 from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
-
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -72,11 +73,19 @@ class AzureStore(BaseStore):
         Returns:
             tuple(container, storage_account, path).
         """
-        try:
-            spec = rhea_parser.parse_wasbs_path(wasbs_url)
-            return spec.container, spec.storage_account, spec.path
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(wasbs_url)
+        if parsed_url.scheme != "wasbs":
+            raise DblueStoresException('Received an invalid url `{}`'.format(wasbs_url))
+        match = re.match("([^@]+)@([^.]+)\\.blob\\.core\\.windows\\.net", parsed_url.netloc)
+        if match is None:
+            raise DblueStoresException('wasbs url must be of the form <container>@<account>.blob.core.windows.net')
+
+        container = match.group(1)
+        storage_account = match.group(2)
+        path = parsed_url.path
+        if path.startswith('/'):
+            path = path[1:]
+        return container, storage_account, path
 
     def check_blob(self, blob, container_name=None):
         """

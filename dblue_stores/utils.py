@@ -1,5 +1,6 @@
 import datetime
 import os
+
 from contextlib import contextmanager
 from decimal import Decimal
 
@@ -73,4 +74,7 @@ def get_files_in_current_directory(path):
         for file_name in files:
             result_files.append(os.path.join(root, file_name))
 
-    yield result_files
+    try:
+        yield result_files
+    except StopIteration:
+        return

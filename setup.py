@@ -14,8 +14,8 @@ def read_readme():
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
+        self.test_args = []  # pylint: disable=attribute-defined-outside-init
+        self.test_suite = True  # pylint: disable=attribute-defined-outside-init
 
     def run_tests(self):
         import pytest
@@ -56,7 +56,6 @@ setup(name='dblue_stores',
       ],
       install_requires=[
           "python-decouple==3.1",
-          "rhea>=0.5.4",
       ],
       extras_require={
           "s3": [
@@ -70,7 +69,7 @@ setup(name='dblue_stores',
               "azure-storage==0.36.0",
           ],
           "sftp": [
-            "paramiko"
+              "paramiko"
           ],
       },
       classifiers=[

@@ -1,10 +1,10 @@
 import os
-from botocore.exceptions import ClientError
-from rhea import RheaError
-from rhea import parser as rhea_parser
-from six import BytesIO
 
-from .base import BaseStore
+from six import BytesIO
+from urllib.parse import urlparse
+
+from botocore.exceptions import ClientError
+
 from ..clients.aws import AwsClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
@@ -14,7 +14,7 @@ from ..utils import (
     force_bytes,
     get_files_in_current_directory
 )
-
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -149,11 +149,13 @@ class S3Store(BaseStore):
         Returns:
              tuple(bucket_name, key).
         """
-        try:
-            spec = rhea_parser.parse_s3_path(s3_url)
-            return spec.bucket, spec.key
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(s3_url)
+        if not parsed_url.netloc:
+            raise DblueStoresException('Received an invalid S3 url `{}`'.format(s3_url))
+        else:
+            bucket_name = parsed_url.netloc
+            key = parsed_url.path.strip('/')
+            return bucket_name, key
 
     @staticmethod
     def check_prefix_format(prefix, delimiter):

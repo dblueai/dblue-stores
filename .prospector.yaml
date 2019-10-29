@@ -4,7 +4,7 @@ strictness: high
 test-warnings: true
 doc-warnings: true
 
-max-line-length: 100
+max-line-length: 120
 
 
 ignore-patterns:
@@ -19,6 +19,7 @@ mccabe:
 
 pylint:
   disable:
+    - astroid-error
     - abstract-method
     - broad-except
     - cyclic-import
@@ -37,3 +38,4 @@ pylint:
     - missing-final-newline
   options:
     ignore: migrations
+    max-line-length: 120
