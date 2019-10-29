@@ -2,14 +2,13 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-
 from botocore.exceptions import ClientError
 from rhea import RheaError
 from rhea import parser as rhea_parser
 from six import BytesIO
 
 from .base_store import BaseStore
-from ..clients import aws_client
+from ..clients.aws import AwsClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
 from ..utils import (
@@ -33,31 +32,16 @@ class S3Store(BaseStore):
     def __init__(self, client=None, resource=None, **kwargs):
         self._client = client
         self._resource = resource
+
         self._encoding = kwargs.get('encoding', 'utf-8')
-        self._endpoint_url = (kwargs.get('endpoint_url') or
-                              kwargs.get('aws_endpoint_url') or
-                              kwargs.get('AWS_ENDPOINT_URL'))
-        self._aws_access_key_id = (kwargs.get('access_key_id') or
-                                   kwargs.get('aws_access_key_id') or
-                                   kwargs.get('AWS_ACCESS_KEY_ID'))
-        self._aws_secret_access_key = (kwargs.get('secret_access_key') or
-                                       kwargs.get('aws_secret_access_key') or
-                                       kwargs.get('AWS_SECRET_ACCESS_KEY'))
-        self._aws_session_token = (kwargs.get('session_token') or
-                                   kwargs.get('aws_session_token') or
-                                   kwargs.get('AWS_SECURITY_TOKEN'))
-        self._region_name = (kwargs.get('region') or
-                             kwargs.get('aws_region') or
-                             kwargs.get('AWS_REGION'))
-        self._aws_verify_ssl = kwargs.get('verify_ssl',
-                                          kwargs.get('aws_verify_ssl',
-                                                     kwargs.get('AWS_VERIFY_SSL', None)))
-        self._aws_use_ssl = (kwargs.get('use_ssl') or
-                             kwargs.get('aws_use_ssl') or
-                             kwargs.get('AWS_USE_SSL'))
-        self._aws_legacy_api = (kwargs.get('legacy_api') or
-                                kwargs.get('aws_legacy_api') or
-                                kwargs.get('AWS_LEGACY_API'))
+        self._endpoint_url = kwargs.get('AWS_ENDPOINT_URL')
+        self._aws_access_key_id = kwargs.get('AWS_ACCESS_KEY_ID')
+        self._aws_secret_access_key = kwargs.get('AWS_SECRET_ACCESS_KEY')
+        self._aws_session_token = kwargs.get('AWS_SECURITY_TOKEN')
+        self._region_name = kwargs.get('AWS_REGION')
+        self._aws_verify_ssl = kwargs.get('AWS_VERIFY_SSL', None)
+        self._aws_use_ssl = kwargs.get('AWS_USE_SSL')
+        self._aws_legacy_api = kwargs.get('AWS_LEGACY_API')
 
     @property
     def client(self):
@@ -121,7 +105,7 @@ class S3Store(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = aws_client.get_aws_client(
+        self._client = AwsClient.get_client(
             's3',
             endpoint_url=endpoint_url,
             aws_access_key_id=aws_access_key_id,
@@ -129,7 +113,8 @@ class S3Store(BaseStore):
             aws_session_token=aws_session_token,
             region_name=region_name,
             aws_use_ssl=aws_use_ssl,
-            aws_verify_ssl=aws_verify_ssl)
+            aws_verify_ssl=aws_verify_ssl
+        )
 
     def set_resource(self,
                      endpoint_url=None,
@@ -151,7 +136,7 @@ class S3Store(BaseStore):
         Returns:
              Service resource instance
         """
-        self._resource = aws_client.get_aws_resource(
+        self._resource = AwsClient.get_resource(
             's3',
             endpoint_url=endpoint_url,
             aws_access_key_id=aws_access_key_id,
@@ -232,7 +217,7 @@ class S3Store(BaseStore):
             'MaxItems': max_items,
         }
 
-        legacy_api = aws_client.get_legacy_api(legacy_api=self._aws_legacy_api)
+        legacy_api = AwsClient.get_legacy_api(legacy_api=self._aws_legacy_api)
 
         if legacy_api:
             paginator = self.client.get_paginator('list_objects')

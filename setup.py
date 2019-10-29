@@ -24,15 +24,15 @@ class PyTest(TestCommand):
 
 
 setup(name='dblue_stores',
-      version='1.0.1',
+      version='1.1.0',
       description='Dblue is an abstraction and a collection of clients '
-                  'to interact with cloud storages.',
+                  'to interact with storages.',
       long_description=read_readme(),
       long_description_content_type="text/markdown",
       maintainer='Rajesh Hegde',
-      maintainer_email='rajesh@dblue.ai',
+      maintainer_email='rh@dblue.ai',
       author='Rajesh Hegde',
-      author_email='rajesh@dblue.ai',
+      author_email='rh@dblue.ai',
       url='',
       license='MIT',
       platforms='any',
@@ -51,7 +51,8 @@ setup(name='dblue_stores',
           'ai',
           'reinforcement-learning',
           'kubernetes',
-          'docker'
+          'docker',
+          'sftp',
       ],
       install_requires=[
           "python-decouple==3.1",
@@ -59,14 +60,17 @@ setup(name='dblue_stores',
       ],
       extras_require={
           "s3": [
-              "boto3",
-              "botocore",
+              "boto3==1.7.73",
+              "botocore==1.10.84",
           ],
           "gcs": [
-              "google-cloud-storage",
+              "google-cloud-storage==1.10.0",
           ],
           "azure": [
-              "azure-storage",
+              "azure-storage==0.36.0",
+          ],
+          "sftp": [
+            "paramiko"
           ],
       },
       classifiers=[

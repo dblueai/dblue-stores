@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import mock
 
-from dblue_stores.clients.gc_client import get_gc_client, get_gc_credentials
+from dblue_stores.clients.gcp import get_gc_client, get_gc_credentials
 from dblue_stores.exceptions import DblueStoresException
 
 GCS_MODULE = 'polystores.clients.gc_client.{}'

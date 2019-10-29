@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
-
 from azure.common import AzureHttpError
 from azure.storage.blob.models import BlobPrefix
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
 from .base_store import BaseStore
-from ..clients.azure_client import get_blob_service_connection
+from ..clients.azure import AzureClient
 from ..exceptions import DblueStoresException
 from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
 
@@ -25,17 +21,20 @@ class AzureStore(BaseStore):
 
     def __init__(self, connection=None, **kwargs):
         self._connection = connection
-        self._account_name = kwargs.get('account_name') or kwargs.get('AZURE_ACCOUNT_NAME')
-        self._account_key = kwargs.get('account_key') or kwargs.get('AZURE_ACCOUNT_KEY')
-        self._connection_string = (
-                kwargs.get('connection_string') or kwargs.get('AZURE_CONNECTION_STRING'))
+
+        self._account_name = kwargs.get('AZURE_ACCOUNT_NAME')
+        self._account_key = kwargs.get('AZURE_ACCOUNT_KEY')
+        self._connection_string = kwargs.get('AZURE_CONNECTION_STRING')
 
     @property
     def connection(self):
         if self._connection is None:
-            self.set_connection(account_name=self._account_name,
-                                account_key=self._account_key,
-                                connection_string=self._connection_string)
+            self.set_connection(
+                account_name=self._account_name,
+                account_key=self._account_key,
+                connection_string=self._connection_string
+            )
+
         return self._connection
 
     def set_connection(self, account_name=None, account_key=None, connection_string=None):
@@ -51,9 +50,11 @@ class AzureStore(BaseStore):
         Returns:
             BlockBlobService instance
         """
-        self._connection = get_blob_service_connection(account_name=account_name,
-                                                       account_key=account_key,
-                                                       connection_string=connection_string)
+        self._connection = AzureClient.get_client(
+            account_name=account_name,
+            account_key=account_key,
+            connection_string=connection_string
+        )
 
     def set_env_vars(self):
         if self._account_name:

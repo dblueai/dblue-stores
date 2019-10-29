@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
-
 from google.api_core.exceptions import GoogleAPIError, NotFound
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
 from .base_store import BaseStore
-from ..clients import gc_client
+from ..clients.gcp import GcpClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
 from ..utils import (
@@ -65,7 +61,7 @@ class GCSStore(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = gc_client.get_gc_client(
+        self._client = GcpClient.get_client(
             project_id=project_id,
             key_path=key_path,
             keyfile_dict=keyfile_dict,
