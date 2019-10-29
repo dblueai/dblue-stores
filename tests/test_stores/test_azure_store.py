@@ -10,7 +10,7 @@ import mock
 from azure.storage.blob import Blob, BlobPrefix, BlobProperties
 
 from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.azure_store import AzureStore
+from dblue_stores.stores.azure import AzureStore
 
 AZURE_MODULE = 'polystores.clients.azure_client.{}'
 

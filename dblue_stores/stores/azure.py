@@ -4,7 +4,7 @@ from azure.storage.blob.models import BlobPrefix
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from .base_store import BaseStore
+from .base import BaseStore
 from ..clients.azure import AzureClient
 from ..exceptions import DblueStoresException
 from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory

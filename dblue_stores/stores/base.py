@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 from ..exceptions import DblueStoresException
 
 
@@ -25,16 +22,16 @@ class BaseStore(object):
                 'Received an unrecognised store type `{}`.'.format(store_type))
 
         if store_type == cls.LOCAL_STORE:
-            from .local_store import LocalStore
+            from .local import LocalStore
             return LocalStore()
         if store_type == cls.AZURE_STORE:
-            from .azure_store import AzureStore
+            from .azure import AzureStore
             return AzureStore(**kwargs)
         if store_type == cls.S3_STORE:
-            from .s3_store import S3Store
+            from .s3 import S3Store
             return S3Store(**kwargs)
         if store_type == cls.GCS_STORE:
-            from .gcs_store import GCSStore
+            from .gcs import GCSStore
             return GCSStore(**kwargs)
 
         raise DblueStoresException(

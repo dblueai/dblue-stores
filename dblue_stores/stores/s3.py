@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
 from botocore.exceptions import ClientError
 from rhea import RheaError
 from rhea import parser as rhea_parser
 from six import BytesIO
 
-from .base_store import BaseStore
+from .base import BaseStore
 from ..clients.aws import AwsClient
 from ..exceptions import DblueStoresException
 from ..logger import logger

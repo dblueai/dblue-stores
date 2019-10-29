@@ -11,7 +11,7 @@ from botocore.client import BaseClient
 from moto import mock_s3
 
 from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.s3_store import S3Store
+from dblue_stores.stores.s3 import S3Store
 
 
 class TestAwsStore(TestCase):

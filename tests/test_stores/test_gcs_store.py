@@ -9,7 +9,7 @@ from unittest import TestCase
 import mock
 
 from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.gcs_store import GCSStore
+from dblue_stores.stores.gcs import GCSStore
 
 GCS_MODULE = 'polystores.clients.gc_client.{}'
 

@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
 
 import json
 import os
 
-from .base_store import BaseStore
+from .base import BaseStore
 from .. import settings
 from ..exceptions import DblueStoresException
 

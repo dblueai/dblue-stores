@@ -3,7 +3,7 @@ from google.api_core.exceptions import GoogleAPIError, NotFound
 from rhea import RheaError
 from rhea import parser as rhea_parser
 
-from .base_store import BaseStore
+from .base import BaseStore
 from ..clients.gcp import GcpClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
