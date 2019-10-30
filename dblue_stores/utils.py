@@ -77,4 +77,4 @@ def walk(path):
     try:
         yield result_files
     except StopIteration:
-        return
+        yield []
