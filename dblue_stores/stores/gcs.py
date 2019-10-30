@@ -7,7 +7,7 @@ from google.api_core.exceptions import GoogleAPIError, NotFound
 from ..clients.gcp import GCPClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
+from ..utils import append_basename, check_dirname_exists, walk
 from .base import BaseStore
 
 # pylint:disable=arguments-differ
@@ -258,7 +258,7 @@ class GCSStore(BaseStore):
 
         # Turn the path to absolute paths
         dirname = os.path.abspath(dirname)
-        with get_files_in_current_directory(dirname) as files:
+        with walk(dirname) as files:
             for f in files:
                 file_blob = os.path.join(blob, os.path.relpath(f, dirname))
                 self.upload_file(filename=f,

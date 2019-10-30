@@ -17,6 +17,6 @@ class SFTPClient(BaseClient):
         username = username or config("SFTP_USER", default='root')
         password = password or config("SFTP_PASSWORD", default='')
 
-        transport = paramiko.Transport((host, port))
+        transport = paramiko.Transport(sock=(host, port))
         transport.connect(None, username, password)
         return paramiko.SFTPClient.from_transport(transport)

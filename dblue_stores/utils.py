@@ -56,7 +56,7 @@ def check_dirname_exists(path, is_dir=False):
 
 
 @contextmanager
-def get_files_in_current_directory(path):
+def walk(path):
     """
     Gets all the files under a certain path.
 
