@@ -7,7 +7,7 @@ from google.api_core.exceptions import GoogleAPIError, NotFound
 from ..clients.gcp import GCPClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import append_basename, check_dirname_exists, walk
+from ..utils import append_basename, check_dir_exists, walk
 from .base import BaseStore
 
 # pylint:disable=arguments-differ
@@ -232,7 +232,7 @@ class GCSStore(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, blob)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             blob = self.get_blob(blob=blob, bucket_name=bucket_name)
@@ -285,7 +285,7 @@ class GCSStore(BaseStore):
             local_path = append_basename(local_path, blob)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

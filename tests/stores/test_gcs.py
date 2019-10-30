@@ -32,7 +32,7 @@ class TestGCSStore(TestCase):
         gcs_url = 'gs://bucket/'
         assert GCSStore.parse_gcs_url(gcs_url) == ('bucket', '')
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_store_client(self, client, gc_credentials):
         client.return_value = 'client'
@@ -44,7 +44,7 @@ class TestGCSStore(TestCase):
         assert gc_credentials.call_count == 1
         assert client.call_count == 1
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_existing_object(self, client, _):
         test_bucket = 'test_bucket'
@@ -74,7 +74,7 @@ class TestGCSStore(TestCase):
         response = GCSStore().check_blob(blob=test_object, bucket_name=test_bucket)
         assert response is True
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_non_existing_object(self, client, _):
         test_bucket = 'test_bucket'
@@ -85,7 +85,7 @@ class TestGCSStore(TestCase):
         response = GCSStore().check_blob(blob=test_object, bucket_name=test_bucket)
         assert response is False
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_get_bucket(self, client, _):
         test_bucket = 'test_bucket'
@@ -96,7 +96,7 @@ class TestGCSStore(TestCase):
 
         assert response == {}
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_get_blob(self, client, _):
         test_bucket = 'test_bucket'
@@ -110,7 +110,7 @@ class TestGCSStore(TestCase):
 
         assert response == {}
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_delete(self, client, _):
         test_bucket = 'test_bucket'
@@ -130,7 +130,7 @@ class TestGCSStore(TestCase):
 
         GCSStore().delete(key=test_object, bucket_name=test_bucket)
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_list_empty(self, client, _):
         gcs_url = 'gs://bucket/path/to/blob'
@@ -138,7 +138,7 @@ class TestGCSStore(TestCase):
         client.return_value.get_bucket.return_value.list_blobs.return_value = mock.MagicMock()
         assert store.list(gcs_url) == {'blobs': [], 'prefixes': []}
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_list_dirs_and_blobs(self, client, _):
         blob_root_path = 'project_path/experiment_id/'
@@ -169,7 +169,7 @@ class TestGCSStore(TestCase):
         assert blobs[0][1] == obj_mock.size
         assert prefixes[0] == dirname
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_list_with_subdir(self, client, _):
         blob_root_path = 'project_path/experiment_id/'
@@ -200,7 +200,7 @@ class TestGCSStore(TestCase):
         assert blobs[0][1] == obj_mock.size
         assert prefixes[0] == subdirname
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_upload(self, client, _):
         dirname = tempfile.mkdtemp()
@@ -234,7 +234,7 @@ class TestGCSStore(TestCase):
          .blob.return_value
          .upload_from_filename.assert_called_with(fpath))
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_download(self, client, _):
         dirname = tempfile.mkdtemp()
@@ -266,7 +266,7 @@ class TestGCSStore(TestCase):
             dirname + '/blob.txt'
         )
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_upload_dir(self, client, _):
         dirname1 = tempfile.mkdtemp()
@@ -329,7 +329,7 @@ class TestGCSStore(TestCase):
                                                  mock.call(fpath3),
                                                  ], any_order=True))
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_download_dir(self, client, _):
         dirname1 = tempfile.mkdtemp()
@@ -398,7 +398,7 @@ class TestGCSStore(TestCase):
                             mock.call('{}/{}/test3.txt'.format(dirname3, rel_path2))],
                            any_order=True))
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_download_dir_with_basename(self, client, _):
         dirname1 = tempfile.mkdtemp()

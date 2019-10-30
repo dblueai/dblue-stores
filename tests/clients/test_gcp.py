@@ -41,7 +41,7 @@ class TestGCClient(TestCase):
         assert service_account.call_count == 2
         assert credentials is None
 
-    @mock.patch(GCS_MODULE.format('GcpClient.get_credentials'))
+    @mock.patch(GCS_MODULE.format('GCPClient.get_credentials'))
     @mock.patch(GCS_MODULE.format('Client'))
     def test_get_client(self, client, gc_credentials):
         GCPClient.get_client()

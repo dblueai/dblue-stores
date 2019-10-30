@@ -8,7 +8,7 @@ from azure.storage.blob.models import BlobPrefix  # pylint: disable=import-error
 
 from ..clients.azure import AzureClient
 from ..exceptions import DblueStoresException
-from ..utils import append_basename, check_dirname_exists, walk
+from ..utils import append_basename, check_dir_exists, walk
 from .base import BaseStore
 
 # pylint:disable=arguments-differ
@@ -221,7 +221,7 @@ class AzureStore(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, blob)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             self.connection.get_blob_to_path(container_name, blob, local_path)
@@ -247,7 +247,7 @@ class AzureStore(BaseStore):
             local_path = append_basename(local_path, blob)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

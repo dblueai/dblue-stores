@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 from ..clients.aws import AWSClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import append_basename, check_dirname_exists, force_bytes, walk
+from ..utils import append_basename, check_dir_exists, force_bytes, walk
 from .base import BaseStore
 
 # pylint:disable=arguments-differ
@@ -466,7 +466,7 @@ class S3Store(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, key)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             self.client.download_file(bucket_name, key, local_path)
@@ -534,7 +534,7 @@ class S3Store(BaseStore):
             local_path = append_basename(local_path, key)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

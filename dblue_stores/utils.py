@@ -48,7 +48,7 @@ def append_basename(path, filename):
     return os.path.join(path, os.path.basename(filename))
 
 
-def check_dirname_exists(path, is_dir=False):
+def check_dir_exists(path, is_dir=False):
     if not is_dir:
         path = os.path.dirname(os.path.abspath(path))
     if not os.path.isdir(path):
