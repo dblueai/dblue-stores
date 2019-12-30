@@ -187,6 +187,26 @@ az_store.download_dir(blob, local_path, container_name=None, use_basename=True)
 pytest
 ```
 
+## Publish
+
+### Install twine
+
+```bash
+pip install twine
+```
+
+### Build distribution
+
+```bash
+python setup.py sdist
+```
+
+### Publish to pypi
+
+```bash
+twine upload dist/*
+```
+
 ## Credits
 
-Most of the codes are borrowed from https://github.com/polyaxon/polystores
+Most of the code are borrowed from https://github.com/polyaxon/polystores
