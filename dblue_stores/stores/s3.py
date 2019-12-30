@@ -27,8 +27,8 @@ class S3Store(BaseStore):
 
         self._encoding = kwargs.get('encoding', 'utf-8')
         self._endpoint_url = kwargs.get('AWS_ENDPOINT_URL')
-        self._aws_access_key_id = kwargs.get('AWS_ACCESS_KEY_ID')
-        self._aws_secret_access_key = kwargs.get('AWS_SECRET_ACCESS_KEY')
+        self._aws_access_key = kwargs.get('AWS_ACCESS_KEY')
+        self._aws_secret_key = kwargs.get('AWS_SECRET_KEY')
         self._aws_session_token = kwargs.get('AWS_SECURITY_TOKEN')
         self._region_name = kwargs.get('AWS_REGION')
         self._aws_verify_ssl = kwargs.get('AWS_VERIFY_SSL', None)
@@ -39,8 +39,8 @@ class S3Store(BaseStore):
     def client(self):
         if self._client is None:
             self.set_client(endpoint_url=self._endpoint_url,
-                            aws_access_key_id=self._aws_access_key_id,
-                            aws_secret_access_key=self._aws_secret_access_key,
+                            aws_access_key=self._aws_access_key,
+                            aws_secret_key=self._aws_secret_key,
                             aws_session_token=self._aws_session_token,
                             region_name=self._region_name,
                             aws_use_ssl=self._aws_use_ssl,
@@ -50,10 +50,10 @@ class S3Store(BaseStore):
     def set_env_vars(self):
         if self._endpoint_url:
             os.environ['AWS_ENDPOINT_URL'] = self._endpoint_url
-        if self._aws_access_key_id:
-            os.environ['AWS_ACCESS_KEY_ID'] = self._aws_access_key_id
-        if self._aws_secret_access_key:
-            os.environ['AWS_SECRET_ACCESS_KEY'] = self._aws_secret_access_key
+        if self._aws_access_key:
+            os.environ['AWS_ACCESS_KEY'] = self._aws_access_key
+        if self._aws_secret_key:
+            os.environ['AWS_SECRET_KEY'] = self._aws_secret_key
         if self._aws_session_token:
             os.environ['AWS_SECURITY_TOKEN'] = self._aws_session_token
         if self._region_name:
@@ -69,16 +69,16 @@ class S3Store(BaseStore):
     def resource(self):
         if self._resource is None:
             self.set_resource(endpoint_url=self._endpoint_url,
-                              aws_access_key_id=self._aws_access_key_id,
-                              aws_secret_access_key=self._aws_secret_access_key,
+                              aws_access_key=self._aws_access_key,
+                              aws_secret_key=self._aws_secret_key,
                               aws_session_token=self._aws_session_token,
                               region_name=self._region_name)
         return self._resource
 
     def set_client(self,
                    endpoint_url=None,
-                   aws_access_key_id=None,
-                   aws_secret_access_key=None,
+                   aws_access_key=None,
+                   aws_secret_key=None,
                    aws_session_token=None,
                    region_name=None,
                    aws_use_ssl=True,
@@ -88,8 +88,8 @@ class S3Store(BaseStore):
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key_id: `str`. The access key to use when creating the client.
-            aws_secret_access_key: `str`. The secret key to use when creating the client.
+            aws_access_key: `str`. The access key to use when creating the client.
+            aws_secret_key: `str`. The secret key to use when creating the client.
             aws_session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
@@ -100,8 +100,8 @@ class S3Store(BaseStore):
         self._client = AWSClient.get_client(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
+            aws_access_key=aws_access_key,
+            aws_secret_key=aws_secret_key,
             aws_session_token=aws_session_token,
             region_name=region_name,
             aws_use_ssl=aws_use_ssl,
@@ -110,8 +110,8 @@ class S3Store(BaseStore):
 
     def set_resource(self,
                      endpoint_url=None,
-                     aws_access_key_id=None,
-                     aws_secret_access_key=None,
+                     aws_access_key=None,
+                     aws_secret_key=None,
                      aws_session_token=None,
                      region_name=None):
         """
@@ -119,8 +119,8 @@ class S3Store(BaseStore):
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key_id: `str`. The access key to use when creating the client.
-            aws_secret_access_key: `str`. The secret key to use when creating the client.
+            aws_access_key: `str`. The access key to use when creating the client.
+            aws_secret_key: `str`. The secret key to use when creating the client.
             aws_session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
@@ -131,8 +131,8 @@ class S3Store(BaseStore):
         self._resource = AWSClient.get_resource(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
+            aws_access_key=aws_access_key,
+            aws_secret_key=aws_secret_key,
             aws_session_token=aws_session_token,
             region_name=region_name)
 

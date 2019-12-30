@@ -16,19 +16,19 @@ class AWSClient(BaseClient):
         return legacy_api
 
     @staticmethod
-    def get_session(aws_access_key_id=None,
-                    aws_secret_access_key=None,
+    def get_session(aws_access_key=None,
+                    aws_secret_key=None,
                     aws_session_token=None,
                     region_name=None):
 
-        aws_access_key_id = aws_access_key_id or config("AWS_ACCESS_KEY_ID", default=None)
-        aws_secret_access_key = aws_secret_access_key or config("AWS_SECRET_ACCESS_KEY", default=None)
+        aws_access_key = aws_access_key or config("AWS_ACCESS_KEY", default=None)
+        aws_secret_key = aws_secret_key or config("AWS_SECRET_KEY", default=None)
         aws_session_token = aws_session_token or config("AWS_SECURITY_TOKEN", default=None)
         region_name = region_name or config("AWS_REGION", default=None)
 
         return boto3.session.Session(
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
+            aws_access_key_id=aws_access_key,
+            aws_secret_access_key=aws_secret_key,
             aws_session_token=aws_session_token,
             region_name=region_name
         )
@@ -37,15 +37,15 @@ class AWSClient(BaseClient):
     def _get_client(cls,
                     client_type,
                     endpoint_url=None,
-                    aws_access_key_id=None,
-                    aws_secret_access_key=None,
+                    aws_access_key=None,
+                    aws_secret_key=None,
                     aws_session_token=None,
                     region_name=None,
                     aws_use_ssl=True,
                     aws_verify_ssl=None):
 
-        session = cls.get_session(aws_access_key_id=aws_access_key_id,
-                                  aws_secret_access_key=aws_secret_access_key,
+        session = cls.get_session(aws_access_key=aws_access_key,
+                                  aws_secret_key=aws_secret_key,
                                   aws_session_token=aws_session_token,
                                   region_name=region_name)
 
@@ -67,14 +67,14 @@ class AWSClient(BaseClient):
     def get_resource(cls,
                      resource_type,
                      endpoint_url=None,
-                     aws_access_key_id=None,
-                     aws_secret_access_key=None,
+                     aws_access_key=None,
+                     aws_secret_key=None,
                      aws_session_token=None,
                      region_name=None,
                      aws_use_ssl=True,
                      aws_verify_ssl=None):
-        session = cls.get_session(aws_access_key_id=aws_access_key_id,
-                                  aws_secret_access_key=aws_secret_access_key,
+        session = cls.get_session(aws_access_key=aws_access_key,
+                                  aws_secret_key=aws_secret_key,
                                   aws_session_token=aws_session_token,
                                   region_name=region_name)
 

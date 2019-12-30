@@ -16,8 +16,8 @@ class TestAwsClient(TestCase):
     @mock_s3
     def test_get_aws_session(self):
         session = AWSClient.get_session(
-            aws_access_key_id='a1',
-            aws_secret_access_key='a2',
+            aws_access_key='a1',
+            aws_secret_key='a2',
             aws_session_token='a3',
             region_name='a4'
         )
@@ -29,8 +29,8 @@ class TestAwsClient(TestCase):
         assert credentials.secret_key == 'a2'
         assert credentials.token == 'a3'
 
-        os.environ['AWS_ACCESS_KEY_ID'] = 'b1'
-        os.environ['AWS_SECRET_ACCESS_KEY'] = 'b2'
+        os.environ['AWS_ACCESS_KEY'] = 'b1'
+        os.environ['AWS_SECRET_KEY'] = 'b2'
         os.environ['AWS_SECURITY_TOKEN'] = 'b3'
         os.environ['AWS_REGION'] = 'b4'
         session = AWSClient.get_session()
