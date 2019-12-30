@@ -20,7 +20,6 @@ cfgv==2.0.1
 chardet==3.0.4
 cookies==2.2.1
 cryptography==2.8
--e git+git@github.com:dblueai/dblue-stores.git@43154f2cfe8a5410ef068a3ec6de3cbe3bfe1d2f#egg=dblue_stores
 distro==1.4.0
 docker==4.1.0
 docutils==0.15.2
