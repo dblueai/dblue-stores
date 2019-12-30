@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import datetime
 import os
+
 from contextlib import contextmanager
 from decimal import Decimal
 
@@ -50,7 +48,7 @@ def append_basename(path, filename):
     return os.path.join(path, os.path.basename(filename))
 
 
-def check_dirname_exists(path, is_dir=False):
+def check_dir_exists(path, is_dir=False):
     if not is_dir:
         path = os.path.dirname(os.path.abspath(path))
     if not os.path.isdir(path):
@@ -58,7 +56,7 @@ def check_dirname_exists(path, is_dir=False):
 
 
 @contextmanager
-def get_files_in_current_directory(path):
+def walk(path):
     """
     Gets all the files under a certain path.
 
@@ -76,4 +74,7 @@ def get_files_in_current_directory(path):
         for file_name in files:
             result_files.append(os.path.join(root, file_name))
 
-    yield result_files
+    try:
+        yield result_files
+    except StopIteration:
+        yield []

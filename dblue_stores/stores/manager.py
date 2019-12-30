@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import json
 import os
 
-from .base_store import BaseStore
+from .base import BaseStore
 from .. import settings
 from ..exceptions import DblueStoresException
 
@@ -30,7 +27,7 @@ class StoreManager(object):
 
     @classmethod
     def get_credential_for_dataset(cls, dataset_id):
-        credential_file_path = "{}/{}.json".format(settings.DATASET_AUTH_MOUNT_PATH, dataset_id)
+        credential_file_path = "{}/{}.json".format(settings.CREDENTIALS_AUTH_MOUNT_PATH, dataset_id)
         with open(credential_file_path) as f:
             credential = json.load(f)
             return credential

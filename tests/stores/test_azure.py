@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
-import tempfile
-
 from unittest import TestCase
 
 import mock
-
+import tempfile
 from azure.storage.blob import Blob, BlobPrefix, BlobProperties
 
 from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.azure_store import AzureStore
+from dblue_stores.stores.azure import AzureStore
 
-AZURE_MODULE = 'polystores.clients.azure_client.{}'
+AZURE_MODULE = 'dblue_stores.clients.azure.{}'
 
 
 class MockBlobList(object):

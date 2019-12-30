@@ -14,8 +14,8 @@ def read_readme():
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
+        self.test_args = []  # pylint: disable=attribute-defined-outside-init
+        self.test_suite = True  # pylint: disable=attribute-defined-outside-init
 
     def run_tests(self):
         import pytest
@@ -24,16 +24,15 @@ class PyTest(TestCommand):
 
 
 setup(name='dblue_stores',
-      version='1.0.1',
-      description='Dblue is an abstraction and a collection of clients '
-                  'to interact with cloud storages.',
+      version='2.0.0',
+      description='Dblue stores is an abstraction and a collection of clients to interact with storages.',
       long_description=read_readme(),
       long_description_content_type="text/markdown",
       maintainer='Rajesh Hegde',
-      maintainer_email='rajesh@dblue.ai',
+      maintainer_email='rh@dblue.ai',
       author='Rajesh Hegde',
-      author_email='rajesh@dblue.ai',
-      url='',
+      author_email='rh@dblue.ai',
+      url='https://bitbucket.org/dblueai/dblue-stores',
       license='MIT',
       platforms='any',
       packages=find_packages(),
@@ -51,22 +50,25 @@ setup(name='dblue_stores',
           'ai',
           'reinforcement-learning',
           'kubernetes',
-          'docker'
+          'docker',
+          'sftp',
       ],
       install_requires=[
           "python-decouple==3.1",
-          "rhea>=0.5.4",
       ],
       extras_require={
           "s3": [
-              "boto3",
-              "botocore",
+              "boto3==1.7.73",
+              "botocore==1.10.84",
           ],
           "gcs": [
-              "google-cloud-storage",
+              "google-cloud-storage==1.10.0",
           ],
           "azure": [
-              "azure-storage",
+              "azure-storage==0.36.0",
+          ],
+          "sftp": [
+              "paramiko==2.6.0"
           ],
       },
       classifiers=[

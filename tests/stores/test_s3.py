@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from unittest import TestCase
 
 import os
 import tempfile
-
-from unittest import TestCase
-
 from boto3.resources.base import ServiceResource
 from botocore.client import BaseClient
 from moto import mock_s3
 
 from dblue_stores.exceptions import DblueStoresException
-from dblue_stores.stores.s3_store import S3Store
+from dblue_stores.stores.s3 import S3Store
 
 
 class TestAwsStore(TestCase):

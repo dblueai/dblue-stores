@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
+import re
 
-from azure.common import AzureHttpError
-from azure.storage.blob.models import BlobPrefix
-from rhea import RheaError
-from rhea import parser as rhea_parser
+from urllib.parse import urlparse
 
-from .base_store import BaseStore
-from ..clients.azure_client import get_blob_service_connection
+from azure.common import AzureHttpError  # pylint: disable=import-error
+from azure.storage.blob.models import BlobPrefix  # pylint: disable=import-error
+
+from ..clients.azure import AzureClient
 from ..exceptions import DblueStoresException
-from ..utils import append_basename, check_dirname_exists, get_files_in_current_directory
-
+from ..utils import append_basename, check_dir_exists, walk
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -25,17 +22,20 @@ class AzureStore(BaseStore):
 
     def __init__(self, connection=None, **kwargs):
         self._connection = connection
-        self._account_name = kwargs.get('account_name') or kwargs.get('AZURE_ACCOUNT_NAME')
-        self._account_key = kwargs.get('account_key') or kwargs.get('AZURE_ACCOUNT_KEY')
-        self._connection_string = (
-                kwargs.get('connection_string') or kwargs.get('AZURE_CONNECTION_STRING'))
+
+        self._account_name = kwargs.get('AZURE_ACCOUNT_NAME')
+        self._account_key = kwargs.get('AZURE_ACCOUNT_KEY')
+        self._connection_string = kwargs.get('AZURE_CONNECTION_STRING')
 
     @property
     def connection(self):
         if self._connection is None:
-            self.set_connection(account_name=self._account_name,
-                                account_key=self._account_key,
-                                connection_string=self._connection_string)
+            self.set_connection(
+                account_name=self._account_name,
+                account_key=self._account_key,
+                connection_string=self._connection_string
+            )
+
         return self._connection
 
     def set_connection(self, account_name=None, account_key=None, connection_string=None):
@@ -51,9 +51,11 @@ class AzureStore(BaseStore):
         Returns:
             BlockBlobService instance
         """
-        self._connection = get_blob_service_connection(account_name=account_name,
-                                                       account_key=account_key,
-                                                       connection_string=connection_string)
+        self._connection = AzureClient.get_client(
+            account_name=account_name,
+            account_key=account_key,
+            connection_string=connection_string
+        )
 
     def set_env_vars(self):
         if self._account_name:
@@ -71,11 +73,19 @@ class AzureStore(BaseStore):
         Returns:
             tuple(container, storage_account, path).
         """
-        try:
-            spec = rhea_parser.parse_wasbs_path(wasbs_url)
-            return spec.container, spec.storage_account, spec.path
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(wasbs_url)
+        if parsed_url.scheme != "wasbs":
+            raise DblueStoresException('Received an invalid url `{}`'.format(wasbs_url))
+        match = re.match("([^@]+)@([^.]+)\\.blob\\.core\\.windows\\.net", parsed_url.netloc)
+        if match is None:
+            raise DblueStoresException('wasbs url must be of the form <container>@<account>.blob.core.windows.net')
+
+        container = match.group(1)
+        storage_account = match.group(2)
+        path = parsed_url.path
+        if path.startswith('/'):
+            path = path[1:]
+        return container, storage_account, path
 
     def check_blob(self, blob, container_name=None):
         """
@@ -185,7 +195,7 @@ class AzureStore(BaseStore):
 
         # Turn the path to absolute paths
         dirname = os.path.abspath(dirname)
-        with get_files_in_current_directory(dirname) as files:
+        with walk(dirname) as files:
             for f in files:
                 file_blob = os.path.join(blob, os.path.relpath(f, dirname))
                 self.upload_file(filename=f,
@@ -211,7 +221,7 @@ class AzureStore(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, blob)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             self.connection.get_blob_to_path(container_name, blob, local_path)
@@ -237,7 +247,7 @@ class AzureStore(BaseStore):
             local_path = append_basename(local_path, blob)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

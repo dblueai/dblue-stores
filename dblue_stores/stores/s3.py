@@ -1,24 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
 
-from botocore.exceptions import ClientError
-from rhea import RheaError
-from rhea import parser as rhea_parser
 from six import BytesIO
+from urllib.parse import urlparse
 
-from .base_store import BaseStore
-from ..clients import aws_client
+from botocore.exceptions import ClientError
+
+from ..clients.aws import AWSClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import (
-    append_basename,
-    check_dirname_exists,
-    force_bytes,
-    get_files_in_current_directory
-)
-
+from ..utils import append_basename, check_dir_exists, force_bytes, walk
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -33,38 +24,23 @@ class S3Store(BaseStore):
     def __init__(self, client=None, resource=None, **kwargs):
         self._client = client
         self._resource = resource
+
         self._encoding = kwargs.get('encoding', 'utf-8')
-        self._endpoint_url = (kwargs.get('endpoint_url') or
-                              kwargs.get('aws_endpoint_url') or
-                              kwargs.get('AWS_ENDPOINT_URL'))
-        self._aws_access_key_id = (kwargs.get('access_key_id') or
-                                   kwargs.get('aws_access_key_id') or
-                                   kwargs.get('AWS_ACCESS_KEY_ID'))
-        self._aws_secret_access_key = (kwargs.get('secret_access_key') or
-                                       kwargs.get('aws_secret_access_key') or
-                                       kwargs.get('AWS_SECRET_ACCESS_KEY'))
-        self._aws_session_token = (kwargs.get('session_token') or
-                                   kwargs.get('aws_session_token') or
-                                   kwargs.get('AWS_SECURITY_TOKEN'))
-        self._region_name = (kwargs.get('region') or
-                             kwargs.get('aws_region') or
-                             kwargs.get('AWS_REGION'))
-        self._aws_verify_ssl = kwargs.get('verify_ssl',
-                                          kwargs.get('aws_verify_ssl',
-                                                     kwargs.get('AWS_VERIFY_SSL', None)))
-        self._aws_use_ssl = (kwargs.get('use_ssl') or
-                             kwargs.get('aws_use_ssl') or
-                             kwargs.get('AWS_USE_SSL'))
-        self._aws_legacy_api = (kwargs.get('legacy_api') or
-                                kwargs.get('aws_legacy_api') or
-                                kwargs.get('AWS_LEGACY_API'))
+        self._endpoint_url = kwargs.get('AWS_ENDPOINT_URL')
+        self._aws_access_key = kwargs.get('AWS_ACCESS_KEY')
+        self._aws_secret_key = kwargs.get('AWS_SECRET_KEY')
+        self._aws_session_token = kwargs.get('AWS_SECURITY_TOKEN')
+        self._region_name = kwargs.get('AWS_REGION')
+        self._aws_verify_ssl = kwargs.get('AWS_VERIFY_SSL', None)
+        self._aws_use_ssl = kwargs.get('AWS_USE_SSL')
+        self._aws_legacy_api = kwargs.get('AWS_LEGACY_API')
 
     @property
     def client(self):
         if self._client is None:
             self.set_client(endpoint_url=self._endpoint_url,
-                            aws_access_key_id=self._aws_access_key_id,
-                            aws_secret_access_key=self._aws_secret_access_key,
+                            aws_access_key=self._aws_access_key,
+                            aws_secret_key=self._aws_secret_key,
                             aws_session_token=self._aws_session_token,
                             region_name=self._region_name,
                             aws_use_ssl=self._aws_use_ssl,
@@ -74,10 +50,10 @@ class S3Store(BaseStore):
     def set_env_vars(self):
         if self._endpoint_url:
             os.environ['AWS_ENDPOINT_URL'] = self._endpoint_url
-        if self._aws_access_key_id:
-            os.environ['AWS_ACCESS_KEY_ID'] = self._aws_access_key_id
-        if self._aws_secret_access_key:
-            os.environ['AWS_SECRET_ACCESS_KEY'] = self._aws_secret_access_key
+        if self._aws_access_key:
+            os.environ['AWS_ACCESS_KEY'] = self._aws_access_key
+        if self._aws_secret_key:
+            os.environ['AWS_SECRET_KEY'] = self._aws_secret_key
         if self._aws_session_token:
             os.environ['AWS_SECURITY_TOKEN'] = self._aws_session_token
         if self._region_name:
@@ -93,16 +69,16 @@ class S3Store(BaseStore):
     def resource(self):
         if self._resource is None:
             self.set_resource(endpoint_url=self._endpoint_url,
-                              aws_access_key_id=self._aws_access_key_id,
-                              aws_secret_access_key=self._aws_secret_access_key,
+                              aws_access_key=self._aws_access_key,
+                              aws_secret_key=self._aws_secret_key,
                               aws_session_token=self._aws_session_token,
                               region_name=self._region_name)
         return self._resource
 
     def set_client(self,
                    endpoint_url=None,
-                   aws_access_key_id=None,
-                   aws_secret_access_key=None,
+                   aws_access_key=None,
+                   aws_secret_key=None,
                    aws_session_token=None,
                    region_name=None,
                    aws_use_ssl=True,
@@ -112,8 +88,8 @@ class S3Store(BaseStore):
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key_id: `str`. The access key to use when creating the client.
-            aws_secret_access_key: `str`. The secret key to use when creating the client.
+            aws_access_key: `str`. The access key to use when creating the client.
+            aws_secret_key: `str`. The secret key to use when creating the client.
             aws_session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
@@ -121,20 +97,21 @@ class S3Store(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = aws_client.get_aws_client(
+        self._client = AWSClient.get_client(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
+            aws_access_key=aws_access_key,
+            aws_secret_key=aws_secret_key,
             aws_session_token=aws_session_token,
             region_name=region_name,
             aws_use_ssl=aws_use_ssl,
-            aws_verify_ssl=aws_verify_ssl)
+            aws_verify_ssl=aws_verify_ssl
+        )
 
     def set_resource(self,
                      endpoint_url=None,
-                     aws_access_key_id=None,
-                     aws_secret_access_key=None,
+                     aws_access_key=None,
+                     aws_secret_key=None,
                      aws_session_token=None,
                      region_name=None):
         """
@@ -142,8 +119,8 @@ class S3Store(BaseStore):
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key_id: `str`. The access key to use when creating the client.
-            aws_secret_access_key: `str`. The secret key to use when creating the client.
+            aws_access_key: `str`. The access key to use when creating the client.
+            aws_secret_key: `str`. The secret key to use when creating the client.
             aws_session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
@@ -151,11 +128,11 @@ class S3Store(BaseStore):
         Returns:
              Service resource instance
         """
-        self._resource = aws_client.get_aws_resource(
+        self._resource = AWSClient.get_resource(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
+            aws_access_key=aws_access_key,
+            aws_secret_key=aws_secret_key,
             aws_session_token=aws_session_token,
             region_name=region_name)
 
@@ -167,11 +144,13 @@ class S3Store(BaseStore):
         Returns:
              tuple(bucket_name, key).
         """
-        try:
-            spec = rhea_parser.parse_s3_path(s3_url)
-            return spec.bucket, spec.key
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(s3_url)
+        if not parsed_url.netloc:
+            raise DblueStoresException('Received an invalid S3 url `{}`'.format(s3_url))
+        else:
+            bucket_name = parsed_url.netloc
+            key = parsed_url.path.strip('/')
+            return bucket_name, key
 
     @staticmethod
     def check_prefix_format(prefix, delimiter):
@@ -232,7 +211,7 @@ class S3Store(BaseStore):
             'MaxItems': max_items,
         }
 
-        legacy_api = aws_client.get_legacy_api(legacy_api=self._aws_legacy_api)
+        legacy_api = AWSClient.get_legacy_api(legacy_api=self._aws_legacy_api)
 
         if legacy_api:
             paginator = self.client.get_paginator('list_objects')
@@ -487,7 +466,7 @@ class S3Store(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, key)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             self.client.download_file(bucket_name, key, local_path)
@@ -525,7 +504,7 @@ class S3Store(BaseStore):
 
         # Turn the path to absolute paths
         dirname = os.path.abspath(dirname)
-        with get_files_in_current_directory(dirname) as files:
+        with walk(dirname) as files:
             for f in files:
                 file_key = os.path.join(key, os.path.relpath(f, dirname))
                 self.upload_file(filename=f,
@@ -555,7 +534,7 @@ class S3Store(BaseStore):
             local_path = append_basename(local_path, key)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

@@ -1,22 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import os
 
-from google.api_core.exceptions import GoogleAPIError, NotFound
-from rhea import RheaError
-from rhea import parser as rhea_parser
+from urllib.parse import urlparse
 
-from .base_store import BaseStore
-from ..clients import gc_client
+from google.api_core.exceptions import GoogleAPIError, NotFound
+
+from ..clients.gcp import GCPClient
 from ..exceptions import DblueStoresException
 from ..logger import logger
-from ..utils import (
-    append_basename,
-    check_dirname_exists,
-    get_files_in_current_directory
-)
-
+from ..utils import append_basename, check_dir_exists, walk
+from .base import BaseStore
 
 # pylint:disable=arguments-differ
 
@@ -65,7 +57,7 @@ class GCSStore(BaseStore):
         Returns:
             Service client instance
         """
-        self._client = gc_client.get_gc_client(
+        self._client = GCPClient.get_client(
             project_id=project_id,
             key_path=key_path,
             keyfile_dict=keyfile_dict,
@@ -81,11 +73,14 @@ class GCSStore(BaseStore):
         Returns:
             tuple(bucket_name, blob).
         """
-        try:
-            spec = rhea_parser.parse_gcs_path(gcs_url)
-            return spec.bucket, spec.blob
-        except RheaError as e:
-            raise DblueStoresException(e)
+        parsed_url = urlparse(gcs_url)
+        if not parsed_url.netloc:
+            raise DblueStoresException('Received an invalid GCS url `{}`'.format(gcs_url))
+        if parsed_url.scheme != 'gs':
+            raise DblueStoresException('Received an invalid url GCS `{}`'.format(gcs_url))
+        blob = parsed_url.path.lstrip('/')
+
+        return parsed_url.netloc, blob
 
     def get_bucket(self, bucket_name):
         """
@@ -171,8 +166,10 @@ class GCSStore(BaseStore):
             list_blobs = []
             for blob in _blobs:
                 name = blob.name[len(key):]
-                if name:
+
+                if all([name, blob.size]):
                     list_blobs.append((name, blob.size))
+
             return list_blobs
 
         def get_prefixes(_prefixes):
@@ -235,7 +232,7 @@ class GCSStore(BaseStore):
         if use_basename:
             local_path = append_basename(local_path, blob)
 
-        check_dirname_exists(local_path)
+        check_dir_exists(local_path)
 
         try:
             blob = self.get_blob(blob=blob, bucket_name=bucket_name)
@@ -261,7 +258,7 @@ class GCSStore(BaseStore):
 
         # Turn the path to absolute paths
         dirname = os.path.abspath(dirname)
-        with get_files_in_current_directory(dirname) as files:
+        with walk(dirname) as files:
             for f in files:
                 file_blob = os.path.join(blob, os.path.relpath(f, dirname))
                 self.upload_file(filename=f,
@@ -288,7 +285,7 @@ class GCSStore(BaseStore):
             local_path = append_basename(local_path, blob)
 
         try:
-            check_dirname_exists(local_path, is_dir=True)
+            check_dir_exists(local_path, is_dir=True)
         except DblueStoresException:
             os.makedirs(local_path)
 

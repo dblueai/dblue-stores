@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 from ..exceptions import DblueStoresException
 
 
-class BaseStore(object):
+class BaseStore:
     """
     A base store interface.
     """
@@ -12,9 +9,13 @@ class BaseStore(object):
     AZURE_STORE = 'azure-storage'
     S3_STORE = 's3'
     GCS_STORE = 'gcs'
-    STORE_TYPES = {LOCAL_STORE, AZURE_STORE, S3_STORE, GCS_STORE}
+    SFTP_STORE = 'sftp'
+    STORE_TYPES = {LOCAL_STORE, AZURE_STORE, S3_STORE, GCS_STORE, SFTP_STORE}
 
     STORE_TYPE = None
+
+    BLOB_TYPE_DIR = "DIR"
+    BLOB_TYPE_FILE = "FILE"
 
     @classmethod
     def get_store(cls, store_type=None, **kwargs):
@@ -25,17 +26,20 @@ class BaseStore(object):
                 'Received an unrecognised store type `{}`.'.format(store_type))
 
         if store_type == cls.LOCAL_STORE:
-            from .local_store import LocalStore
+            from .local import LocalStore
             return LocalStore()
         if store_type == cls.AZURE_STORE:
-            from .azure_store import AzureStore
+            from .azure import AzureStore
             return AzureStore(**kwargs)
         if store_type == cls.S3_STORE:
-            from .s3_store import S3Store
+            from .s3 import S3Store
             return S3Store(**kwargs)
         if store_type == cls.GCS_STORE:
-            from .gcs_store import GCSStore
+            from .gcs import GCSStore
             return GCSStore(**kwargs)
+        if store_type == cls.SFTP_STORE:
+            from .sftp import SFTPStore
+            return SFTPStore(**kwargs)
 
         raise DblueStoresException(
             'Received an unrecognised store type `{}`.'.format(store_type))
@@ -50,6 +54,8 @@ class BaseStore(object):
             store_type = BaseStore.S3_STORE
         elif path.startswith("wasbs://"):
             store_type = BaseStore.AZURE_STORE
+        elif path.startswith("sftp://"):
+            store_type = BaseStore.SFTP_STORE
 
         return store_type
 
@@ -78,6 +84,10 @@ class BaseStore(object):
     @property
     def is_gcs_store(self):
         return self.STORE_TYPE == self.GCS_STORE
+
+    @property
+    def is_sftp_store(self):
+        return self.STORE_TYPE == self.SFTP_STORE
 
     def ls(self, path):
         raise NotImplementedError

@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import tempfile
 
 from unittest import TestCase
 
-from dblue_stores.utils import append_basename, get_files_in_current_directory, is_protected_type
+from dblue_stores.utils import append_basename, is_protected_type, walk
 
 
 class TestUtils(TestCase):
@@ -37,6 +34,6 @@ class TestUtils(TestCase):
         with open(fpath3, 'w') as f:
             f.write('data3')
 
-        with get_files_in_current_directory(dirname) as files:
+        with walk(dirname) as files:
             assert len(files) == 3
             assert set(files) == {fpath1, fpath2, fpath3}
