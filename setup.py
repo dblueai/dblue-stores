@@ -24,16 +24,15 @@ class PyTest(TestCommand):
 
 
 setup(name='dblue_stores',
-      version='1.1.0',
-      description='Dblue is an abstraction and a collection of clients '
-                  'to interact with storages.',
+      version='2.0.0',
+      description='Dblue stores is an abstraction and a collection of clients to interact with storages.',
       long_description=read_readme(),
       long_description_content_type="text/markdown",
       maintainer='Rajesh Hegde',
       maintainer_email='rh@dblue.ai',
       author='Rajesh Hegde',
       author_email='rh@dblue.ai',
-      url='',
+      url='https://bitbucket.org/dblueai/dblue-stores',
       license='MIT',
       platforms='any',
       packages=find_packages(),
