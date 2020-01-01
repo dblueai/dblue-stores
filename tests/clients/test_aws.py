@@ -16,9 +16,9 @@ class TestAwsClient(TestCase):
     @mock_s3
     def test_get_aws_session(self):
         session = AWSClient.get_session(
-            aws_access_key='a1',
-            aws_secret_key='a2',
-            aws_session_token='a3',
+            access_key='a1',
+            secret_key='a2',
+            session_token='a3',
             region_name='a4'
         )
 

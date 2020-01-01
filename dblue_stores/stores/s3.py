@@ -26,71 +26,75 @@ class S3Store(BaseStore):
         self._resource = resource
 
         self._encoding = kwargs.get('encoding', 'utf-8')
-        self._endpoint_url = kwargs.get('AWS_ENDPOINT_URL')
-        self._aws_access_key = kwargs.get('AWS_ACCESS_KEY')
-        self._aws_secret_key = kwargs.get('AWS_SECRET_KEY')
-        self._aws_session_token = kwargs.get('AWS_SECURITY_TOKEN')
-        self._region_name = kwargs.get('AWS_REGION')
-        self._aws_verify_ssl = kwargs.get('AWS_VERIFY_SSL', None)
-        self._aws_use_ssl = kwargs.get('AWS_USE_SSL')
-        self._aws_legacy_api = kwargs.get('AWS_LEGACY_API')
+        self._endpoint_url = kwargs.get('endpoint_url')
+        self._access_key = kwargs.get('access_key')
+        self._secret_key = kwargs.get('secret_key')
+        self._session_token = kwargs.get('session_token')
+        self._region_name = kwargs.get('region_name')
+        self._verify_ssl = kwargs.get('verify_ssl', True)
+        self._use_ssl = kwargs.get('use_ssl', True)
+        self._legacy_api = kwargs.get('legacy_api', False)
 
     @property
     def client(self):
         if self._client is None:
-            self.set_client(endpoint_url=self._endpoint_url,
-                            aws_access_key=self._aws_access_key,
-                            aws_secret_key=self._aws_secret_key,
-                            aws_session_token=self._aws_session_token,
-                            region_name=self._region_name,
-                            aws_use_ssl=self._aws_use_ssl,
-                            aws_verify_ssl=self._aws_verify_ssl)
+            self.set_client(
+                endpoint_url=self._endpoint_url,
+                access_key=self._access_key,
+                secret_key=self._secret_key,
+                session_token=self._session_token,
+                region_name=self._region_name,
+                use_ssl=self._use_ssl,
+                verify_ssl=self._verify_ssl
+            )
         return self._client
 
     def set_env_vars(self):
         if self._endpoint_url:
             os.environ['AWS_ENDPOINT_URL'] = self._endpoint_url
-        if self._aws_access_key:
-            os.environ['AWS_ACCESS_KEY'] = self._aws_access_key
-        if self._aws_secret_key:
-            os.environ['AWS_SECRET_KEY'] = self._aws_secret_key
-        if self._aws_session_token:
-            os.environ['AWS_SECURITY_TOKEN'] = self._aws_session_token
+        if self._access_key:
+            os.environ['AWS_ACCESS_KEY'] = self._access_key
+        if self._secret_key:
+            os.environ['AWS_SECRET_KEY'] = self._secret_key
+        if self._session_token:
+            os.environ['AWS_SECURITY_TOKEN'] = self._session_token
         if self._region_name:
             os.environ['AWS_REGION'] = self._region_name
-        if self._aws_use_ssl is not None:
-            os.environ['AWS_USE_SSL'] = self._aws_use_ssl
-        if self._aws_verify_ssl is not None:
-            os.environ['AWS_VERIFY_SSL'] = self._aws_verify_ssl
-        if self._aws_legacy_api:
-            os.environ['AWS_LEGACY_API'] = self._aws_legacy_api
+        if self._use_ssl is not None:
+            os.environ['AWS_USE_SSL'] = self._use_ssl
+        if self._verify_ssl is not None:
+            os.environ['AWS_VERIFY_SSL'] = self._verify_ssl
+        if self._legacy_api:
+            os.environ['AWS_LEGACY_API'] = self._legacy_api
 
     @property
     def resource(self):
         if self._resource is None:
-            self.set_resource(endpoint_url=self._endpoint_url,
-                              aws_access_key=self._aws_access_key,
-                              aws_secret_key=self._aws_secret_key,
-                              aws_session_token=self._aws_session_token,
-                              region_name=self._region_name)
+            self.set_resource(
+                endpoint_url=self._endpoint_url,
+                access_key=self._access_key,
+                secret_key=self._secret_key,
+                session_token=self._session_token,
+                region_name=self._region_name
+            )
         return self._resource
 
     def set_client(self,
                    endpoint_url=None,
-                   aws_access_key=None,
-                   aws_secret_key=None,
-                   aws_session_token=None,
+                   access_key=None,
+                   secret_key=None,
+                   session_token=None,
                    region_name=None,
-                   aws_use_ssl=True,
-                   aws_verify_ssl=None):
+                   use_ssl=True,
+                   verify_ssl=None):
         """
         Sets a new s3 boto3 client.
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key: `str`. The access key to use when creating the client.
-            aws_secret_key: `str`. The secret key to use when creating the client.
-            aws_session_token: `str`. The session token to use when creating the client.
+            access_key: `str`. The access key to use when creating the client.
+            secret_key: `str`. The secret key to use when creating the client.
+            session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
 
@@ -100,28 +104,28 @@ class S3Store(BaseStore):
         self._client = AWSClient.get_client(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key=aws_access_key,
-            aws_secret_key=aws_secret_key,
-            aws_session_token=aws_session_token,
+            access_key=access_key,
+            secret_key=secret_key,
+            session_token=session_token,
             region_name=region_name,
-            aws_use_ssl=aws_use_ssl,
-            aws_verify_ssl=aws_verify_ssl
+            use_ssl=use_ssl,
+            verify_ssl=verify_ssl
         )
 
     def set_resource(self,
                      endpoint_url=None,
-                     aws_access_key=None,
-                     aws_secret_key=None,
-                     aws_session_token=None,
+                     access_key=None,
+                     secret_key=None,
+                     session_token=None,
                      region_name=None):
         """
         Sets a new s3 boto3 resource.
 
         Args:
             endpoint_url: `str`. The complete URL to use for the constructed client.
-            aws_access_key: `str`. The access key to use when creating the client.
-            aws_secret_key: `str`. The secret key to use when creating the client.
-            aws_session_token: `str`. The session token to use when creating the client.
+            access_key: `str`. The access key to use when creating the client.
+            secret_key: `str`. The secret key to use when creating the client.
+            session_token: `str`. The session token to use when creating the client.
             region_name: `str`. The name of the region associated with the client.
                 A client is associated with a single region.
 
@@ -131,9 +135,9 @@ class S3Store(BaseStore):
         self._resource = AWSClient.get_resource(
             's3',
             endpoint_url=endpoint_url,
-            aws_access_key=aws_access_key,
-            aws_secret_key=aws_secret_key,
-            aws_session_token=aws_session_token,
+            access_key=access_key,
+            secret_key=secret_key,
+            session_token=session_token,
             region_name=region_name)
 
     @staticmethod
@@ -211,7 +215,7 @@ class S3Store(BaseStore):
             'MaxItems': max_items,
         }
 
-        legacy_api = AWSClient.get_legacy_api(legacy_api=self._aws_legacy_api)
+        legacy_api = AWSClient.get_legacy_api(legacy_api=self._legacy_api)
 
         if legacy_api:
             paginator = self.client.get_paginator('list_objects')
@@ -520,7 +524,7 @@ class S3Store(BaseStore):
         Download a directory from S3.
 
         Args:
-            key: `str`. S3 key that will point to the file.
+            key: `str`. S3 key that will point to a directory.
             local_path: `str`. the path to download to.
             bucket_name: `str`. Name of the bucket in which to store the file.
             use_basename: `bool`. whether or not to use the basename of the key.
