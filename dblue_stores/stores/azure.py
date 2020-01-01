@@ -23,9 +23,9 @@ class AzureStore(BaseStore):
     def __init__(self, connection=None, **kwargs):
         self._connection = connection
 
-        self._account_name = kwargs.get('AZURE_ACCOUNT_NAME')
-        self._account_key = kwargs.get('AZURE_ACCOUNT_KEY')
-        self._connection_string = kwargs.get('AZURE_CONNECTION_STRING')
+        self._account_name = kwargs.get('account_name')
+        self._account_key = kwargs.get('account_key')
+        self._connection_string = kwargs.get('connection_string')
 
     @property
     def connection(self):
