@@ -231,6 +231,10 @@ class S3Store(BaseStore):
         def get_keys(contents):
             list_keys = []
             for cont in contents:
+                # To solve empty blob issue
+                if prefix == cont['Key']:
+                    continue
+
                 list_keys.append((cont['Key'][len(prefix):], cont.get('Size')))
 
             return list_keys

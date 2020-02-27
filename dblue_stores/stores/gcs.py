@@ -165,10 +165,14 @@ class GCSStore(BaseStore):
         def get_blobs(_blobs):
             list_blobs = []
             for blob in _blobs:
+
+                # To solve empty blob issue
+                if blob.name == key:
+                    continue
+
                 name = blob.name[len(key):]
 
-                if all([name, blob.size]):
-                    list_blobs.append((name, blob.size))
+                list_blobs.append((name, blob.size))
 
             return list_blobs
 
