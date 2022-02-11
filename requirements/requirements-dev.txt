@@ -58,7 +58,7 @@ pkginfo==1.5.0.1
 pluggy==0.13.0
 pre-commit==1.16.0
 prospector==1.1.6.2
-protobuf==3.10.0
+protobuf==3.15.0
 py==1.8.0
 pyaml==19.4.1
 pyasn1==0.4.7
